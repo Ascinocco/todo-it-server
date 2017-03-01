@@ -1,0 +1,21 @@
+version: "2"
+services: 
+  node:
+    image: "node:latest"
+    container_name: "node"
+    links: 
+      - "mongo"
+    depends_on: 
+      - "mongo"
+    ports:
+      - "3000:3000"
+      - "4443:4433"
+    volumes: 
+      - "$PWD:/usr/src/app"
+    working_dir: "/usr/src/app"
+    command: "npm run dev"
+  mongo:
+    image: "mongo:latest"
+    container_name: "mongo"
+    ports:
+      - "27017:27017"
