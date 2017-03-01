@@ -31,7 +31,7 @@ var Server = (function () {
         this.db = db;
     };
     Server.prototype.registerRoutes = function () {
-        this.app.use('/', AuthRoutes);
+        this.app.use('/auth', AuthRoutes);
     };
     Server.prototype.registerMiddlware = function () {
         this.app.use(function (err, req, res, next) {

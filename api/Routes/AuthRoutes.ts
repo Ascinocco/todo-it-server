@@ -9,7 +9,10 @@ const authController = new AuthController();
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', authController.root);
+/** Auth routes **/
+router.post('/login', authController.login);
+router.post('/logout', authController.logout);
+router.post('/register', authController.register);
+router.delete('/deleteAccount/:id', authController.deleteAccount);
 
 module.exports = router;

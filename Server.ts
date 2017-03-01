@@ -94,7 +94,7 @@ export class Server
      */
     public registerRoutes(): void
     {
-        this.app.use('/', AuthRoutes);
+        this.app.use('/auth', AuthRoutes);
     }
 
     /**
