@@ -9,7 +9,6 @@ export class AuthController
 
     public root(req: Request, res: Response, next: NextFunction)
     {
-        console.log('here??')
         res.status(200).json({msg: "hello word!"})
     }
 }
