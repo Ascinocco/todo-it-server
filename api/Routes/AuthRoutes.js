@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var AuthController_1 = require("../Controllers/AuthController");
 var authController = new AuthController_1.AuthController();
 var express = require('express');

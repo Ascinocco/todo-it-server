@@ -1,9 +1,9 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var AuthController = (function () {
     function AuthController() {
     }
     AuthController.prototype.root = function (req, res, next) {
-        console.log('here??');
         res.status(200).json({ msg: "hello word!" });
     };
     return AuthController;
