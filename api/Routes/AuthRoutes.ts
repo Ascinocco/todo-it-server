@@ -3,12 +3,13 @@
  * so I'm going to leave it the standard express way
  */
 
-import * as express from "express";
 import { AuthController } from '../Controllers/AuthController';
-
-const router = express.Router();
 const authController = new AuthController();
 
+var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
 router.get('/', authController.root);
 
 module.exports = router;
