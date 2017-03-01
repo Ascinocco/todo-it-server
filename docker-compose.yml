@@ -2,7 +2,7 @@ version: "2"
 services: 
   node:
     image: "node:latest"
-    container_name: "node"
+    container_name: "node-server"
     links: 
       - "mongo"
     depends_on: 
