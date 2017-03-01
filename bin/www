@@ -1,39 +1,95 @@
 #!/usr/bin/env node
 "use strict";
 
-/**
- * Module dependencies.
- */
-
 var server = require('../server');
 var debug = require('debug')('server:server');
 var http = require('http');
 
-/**
- * Get port from environment and store in Express.
- */
+var mongoose = require('mongoose');
 
-var port = normalizePort(process.env.PORT || '3000');
-var app = server.Server.boostrap().app;
-app.set('port', port);
+var MongoConfig = {
+    prod: "comingSoon",
+    dev: "mongodb://mongo:27017/todo-it"
+}
 
-/**
- * Create HTTP server.
- */
+var MONGO_URI = MongoConfig.dev;
+var db = mongoose.connection;
 
-var httpServer = http.createServer(app);
+// runs express app
+function run(db) {
+  var port = normalizePort(process.env.PORT || '3000');
+  var env = process.env.ENV || "dev";
+  var app = server.Server.boostrap(db, env).app;
+  app.set('port', port);
+  var httpServer = http.createServer(app);
+  httpServer.listen(port);
+  httpServer.on('error', onError);
+}
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+db.on('connecting', function() {
+    console.log('connecting to MongoDB...');
+});
 
-httpServer.listen(port);
-httpServer.on('error', onError);
-//httpServer.on('listening', onListening);
+db.on('error', function(error) {
+  console.error('Error in MongoDb connection: ' + error);
+  mongoose.disconnect();
+});
 
-/**
- * Normalize a port into a number, string, or false.
- */
+db.on('connected', function() {
+  console.log('MongoDB connected!');
+});
+
+db.once('open', function() {
+  console.log('MongoDB connection opened!');
+  run(db);
+});
+
+db.on('reconnected', function () {
+  console.log('MongoDB reconnected!');
+});
+
+db.on('disconnected', function() {
+  console.log('MongoDB disconnected!');
+  mongoose.connect(MONGO_URI, {server:{auto_reconnect:true}});
+});
+
+mongoose.connect(MONGO_URI, { server: { auto_reconnect: true }})
+
+// /** old server **/
+
+// /**
+//  * Module dependencies.
+//  */
+
+// var server = require('../server');
+// var debug = require('debug')('server:server');
+// var http = require('http');
+
+// /**
+//  * Get port from environment and store in Express.
+//  */
+
+// var port = normalizePort(process.env.PORT || '3000');
+// var app = server.Server.boostrap().app;
+// app.set('port', port);
+
+// /**
+//  * Create HTTP server.
+//  */
+
+// var httpServer = http.createServer(app);
+
+// /**
+//  * Listen on provided port, on all network interfaces.
+//  */
+
+// httpServer.listen(port);
+// httpServer.on('error', onError);
+// //httpServer.on('listening', onListening);
+
+// /**
+//  * Normalize a port into a number, string, or false.
+//  */
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
@@ -51,9 +107,9 @@ function normalizePort(val) {
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
+// /**
+//  * Event listener for HTTP server "error" event.
+//  */
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -79,14 +135,14 @@ function onError(error) {
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
+// /**
+//  * Event listener for HTTP server "listening" event.
+//  */
 
-// function onListening() {
-//   var addr = server.address();
-//   var bind = typeof addr === 'string'
-//     ? 'pipe ' + addr
-//     : 'port ' + addr.port;
-//   debug('Listening on ' + bind);
-// }
+// // function onListening() {
+// //   var addr = server.address();
+// //   var bind = typeof addr === 'string'
+// //     ? 'pipe ' + addr
+// //     : 'port ' + addr.port;
+// //   debug('Listening on ' + bind);
+// // }

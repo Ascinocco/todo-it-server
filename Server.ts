@@ -1,15 +1,12 @@
 import * as path from "path";
 import * as logger from "morgan";
 import * as express from "express";
-// import * as mongoose from "mongoose";// might be problematic
+import * as mongoose from "mongoose";// might be problematic
 import * as favicon from "serve-favicon";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
 
-
-import { MongoConfig } from "./api/config/MongoConfig";
 import { CookieParserConfig } from "./api/config/CookieParserConfig";
-// import * as AuthRoutes from "./api/Routes/AuthRoutes";//maybe works...
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 
 
@@ -17,6 +14,7 @@ export class Server
 {
     public app: express.Application;
     private env: string;
+    public db: any; // for the time being db will be type any so I don't shoot myself
 
     /**
      * Bootstraps server
@@ -26,16 +24,16 @@ export class Server
      * 
      * @memberOf Server
      */
-    public static boostrap(): Server
+    public static boostrap(db: any, env: string): Server
     {
-        return new Server();
+        return new Server(db, env);
     }
 
-    constructor()
+    constructor(db: any, env: string)
     {
         // set environment
         // options: prod, dev
-        this.env = "dev";
+        this.env = env;
 
         // create express app
         this.app = express();
@@ -43,11 +41,17 @@ export class Server
         // config app
         this.config();
 
+        // set db for application
+        this.setDb(db);
+
         // register routes
         this.registerRoutes();
 
         // register middleware
         this.registerMiddlware();
+
+        // just let devs know boostrap is complete
+        this.bootstrapComplete();
     }
 
     /**
@@ -70,10 +74,17 @@ export class Server
 
         // cookie parser secret
         this.app.use(cookieParser(CookieParserConfig[this.env]));
+    }
 
-        //db config | no mongo or mongoose for now
-        //const MONGO_CONNECTION: string = MongoConfig[this.env];
-        //let connection: mongoose.Connection = mongoose.createConnection(MONGO_CONNECTION);
+    /**
+     * Sets database connection 
+     * 
+     * 
+     * @memberOf Server
+     */
+    public setDb(db: any): void
+    {
+        this.db = db;
     }
 
     /**
@@ -103,6 +114,16 @@ export class Server
             console.log(err);
             next(err);
         });
+    }
+
+    public bootstrapComplete(): void
+    {
+        console.log('*************************************');
+        console.log('* -----App Bootstrap Complete------ *');
+        console.log('* -----------Let\'s Todo!----------- *');
+        console.log('* ----From the insane mind of:----- *');
+        console.log('* --------Anthony Scinocco--------- *');
+        console.log('*************************************');
     }
 
 }
