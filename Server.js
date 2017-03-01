@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var CookieParserConfig_1 = require("./api/config/CookieParserConfig");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
+var UserRoutes = require("./api/Routes/UserRoutes");
 var Server = (function () {
     function Server(db, env) {
         this.env = env;
@@ -32,6 +33,7 @@ var Server = (function () {
     };
     Server.prototype.registerRoutes = function () {
         this.app.use('/auth', AuthRoutes);
+        this.app.use('/user', UserRoutes);
     };
     Server.prototype.registerMiddlware = function () {
         this.app.use(function (err, req, res, next) {

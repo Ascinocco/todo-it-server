@@ -8,6 +8,7 @@ import * as cookieParser from "cookie-parser";
 
 import { CookieParserConfig } from "./api/config/CookieParserConfig";
 let AuthRoutes = require("./api/Routes/AuthRoutes");
+let UserRoutes = require("./api/Routes/UserRoutes");
 
 
 export class Server
@@ -95,6 +96,7 @@ export class Server
     public registerRoutes(): void
     {
         this.app.use('/auth', AuthRoutes);
+        this.app.use('/user', UserRoutes);
     }
 
     /**
