@@ -33,6 +33,11 @@ userSchema.methods.comparePassword = function (candidatePassword, callback) {
         callback(null, isMatch);
     });
 };
+userSchema.methods.toJSON = function () {
+    var user = this.toObject();
+    delete user.password;
+    return user;
+};
 var User = mongoose.model('User', userSchema);
 module.exports = User;
 //# sourceMappingURL=User.js.map

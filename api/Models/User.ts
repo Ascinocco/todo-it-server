@@ -48,6 +48,13 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
     });
 }
 
+// removes password field
+userSchema.methods.toJSON = function() {
+    let user  = this.toObject();
+    delete user.password;
+    return user;
+}
+
 // define schema name
 let User = mongoose.model('User', userSchema);
 

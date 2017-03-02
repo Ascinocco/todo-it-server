@@ -1,19 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var User = require('../Models/User');
 var AuthController = (function () {
     function AuthController() {
     }
     AuthController.prototype.login = function (req, res, next) {
-        res.status(200).json({ msg: "Login posted" });
+        return res.status(200).json({ msg: "Login posted" });
     };
     AuthController.prototype.logout = function (req, res, next) {
         res.status(200).json({ msg: "Logout posted" });
     };
     AuthController.prototype.register = function (req, res, next) {
-        res.status(200).json({ msg: "Registration posted" });
+        var user = new User({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password,
+            admin: false
+        });
+        user.save(function (err, user) {
+            if (err) {
+                return res.status(500).json({ msg: "The server caught on fire..." });
+            }
+            user = user.toJSON();
+            return res.status(200).json({ msg: "success!", user: user });
+        });
     };
     AuthController.prototype.deleteAccount = function (req, res, next) {
-        res.status(200).json({ msg: "Account deletion delete requested" });
+        return res.status(200).json({ msg: "Account deletion delete requested" });
     };
     return AuthController;
 }());

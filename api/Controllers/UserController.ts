@@ -1,4 +1,7 @@
 import { NextFunction, Request, Response } from "express";
+import * as mongoose from "mongoose";
+let User = require('../Models/User');
+
 export class UserController
 {
     constructor(){}
