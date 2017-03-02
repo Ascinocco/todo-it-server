@@ -50,6 +50,14 @@ export class AuthController
 
     public deleteAccount(req: Request, res: Response, next: NextFunction): any
     {
-        return res.status(200).json({msg: "Account deletion delete requested"});
+        // delete user
+        let userId = req.params._id;
+        User.findOneAndRemove({ _id: userId}, function(err) {
+            if (err) {
+                return res.status(500).json({ msg: "could not delete your account..." });
+            }
+
+            return res.status(200).json({ msg: "Your account has been deleted!" });
+        });
     }
 }
