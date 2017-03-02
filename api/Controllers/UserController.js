@@ -22,6 +22,15 @@ var UserController = (function () {
         res.status(200)
             .json(user);
     };
+    UserController.prototype.deleteAccount = function (req, res, next) {
+        var userId = req.params._id;
+        User.findOneAndRemove({ _id: userId }, function (err) {
+            if (err) {
+                return res.status(500).json({ msg: "could not delete your account..." });
+            }
+            return res.status(200).json({ msg: "Your account has been deleted!" });
+        });
+    };
     return UserController;
 }());
 exports.UserController = UserController;

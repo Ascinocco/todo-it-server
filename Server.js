@@ -2,11 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var logger = require("morgan");
 var express = require("express");
+var jwt = require("jsonwebtoken");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var CookieParserConfig_1 = require("./api/config/CookieParserConfig");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
+var config = require("./api/config/config");
 var Server = (function () {
     function Server(db, env) {
         this.env = env;
@@ -32,6 +34,22 @@ var Server = (function () {
         this.db = db;
     };
     Server.prototype.registerRoutes = function () {
+        UserRoutes.use(function (req, res, next) {
+            var token = req.body.token || req.query.token || req.headers['x-access-token'];
+            if (token) {
+                jwt.verify(token, config.secret, function (err, decoded) {
+                    if (err) {
+                        return res.json({ msg: "Failed to authenticate" });
+                    }
+                    else {
+                        next(decoded);
+                    }
+                });
+            }
+            else {
+                return res.status(403).json({ msg: "No token provided" });
+            }
+        });
         this.app.use('/auth', AuthRoutes);
         this.app.use('/user', UserRoutes);
     };

@@ -13,6 +13,5 @@ var router = express.Router();
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
 router.post('/register', authController.register);
-router.delete('/delete/:_id', authController.deleteAccount);
 
 module.exports = router;

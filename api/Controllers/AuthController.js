@@ -56,15 +56,6 @@ var AuthController = (function () {
             return res.status(200).json({ msg: "success!", user: user });
         });
     };
-    AuthController.prototype.deleteAccount = function (req, res, next) {
-        var userId = req.params._id;
-        User.findOneAndRemove({ _id: userId }, function (err) {
-            if (err) {
-                return res.status(500).json({ msg: "could not delete your account..." });
-            }
-            return res.status(200).json({ msg: "Your account has been deleted!" });
-        });
-    };
     return AuthController;
 }());
 exports.AuthController = AuthController;

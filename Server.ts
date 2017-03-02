@@ -7,10 +7,13 @@ import * as favicon from "serve-favicon";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
 
-
 import { CookieParserConfig } from "./api/config/CookieParserConfig";
-const AuthRoutes = require("./api/Routes/AuthRoutes");
-const UserRoutes = require("./api/Routes/UserRoutes");
+
+let AuthRoutes = require("./api/Routes/AuthRoutes");
+let UserRoutes = require("./api/Routes/UserRoutes");
+let config = require("./api/config/config");
+
+// import { AuthMiddleware } from "./api/Middleware/AuthMiddleware";
 
 
 export class Server
@@ -97,6 +100,23 @@ export class Server
      */
     public registerRoutes(): void
     {
+        // middleware to check token
+        UserRoutes.use(function(req, res, next) {
+            let token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+            if (token) {
+                jwt.verify(token, config.secret, function(err, decoded) {
+                    if (err) {
+                        return res.json({ msg: "Failed to authenticate" });
+                    } else {
+                        next(decoded);
+                    }
+                });
+            } else {
+                return res.status(403).json({msg: "No token provided"});
+            }
+        });
+
         this.app.use('/auth', AuthRoutes);
         this.app.use('/user', UserRoutes);
     }
