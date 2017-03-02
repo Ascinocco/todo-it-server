@@ -3,21 +3,30 @@ import { NextFunction, Request, Response} from "express";
 import * as mongoose from "mongoose";
 let User = require('../Models/User');
 
+
+/**
+ * Handles all authentication related requested
+ * 
+ * TODO: what return type should these methods have??? 
+ * 
+ * @export
+ * @class AuthController
+ */
 export class AuthController
 {
     constructor(){}
 
-    public login(req: Request, res: Response, next: NextFunction): Response
+    public login(req: Request, res: Response, next: NextFunction): any
     {
         return res.status(200).json({msg: "Login posted"});
     }
 
-    public logout(req: Request, res: Response, next: NextFunction)
+    public logout(req: Request, res: Response, next: NextFunction): any
     {
-        res.status(200).json({msg: "Logout posted"});
+        return res.status(200).json({msg: "Logout posted"});
     }
 
-    public register(req: Request, res: Response, next: NextFunction)
+    public register(req: Request, res: Response, next: NextFunction): any
     {
         let user = new User({
             firstName: req.body.firstName,
@@ -39,7 +48,7 @@ export class AuthController
         //return res.status(200).json({ msg: "failure"});
     }
 
-    public deleteAccount(req: Request, res: Response, next: NextFunction): Response
+    public deleteAccount(req: Request, res: Response, next: NextFunction): any
     {
         return res.status(200).json({msg: "Account deletion delete requested"});
     }

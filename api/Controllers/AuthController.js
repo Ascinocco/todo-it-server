@@ -8,7 +8,7 @@ var AuthController = (function () {
         return res.status(200).json({ msg: "Login posted" });
     };
     AuthController.prototype.logout = function (req, res, next) {
-        res.status(200).json({ msg: "Logout posted" });
+        return res.status(200).json({ msg: "Logout posted" });
     };
     AuthController.prototype.register = function (req, res, next) {
         var user = new User({
