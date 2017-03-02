@@ -48,7 +48,7 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
     });
 }
 
-// degine schema name
+// define schema name
 let User = mongoose.model('User', userSchema);
 
 module.exports = User;
