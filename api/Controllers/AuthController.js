@@ -24,7 +24,7 @@ var AuthController = (function () {
                         return res.status(200).json({ msg: "incorrect password" });
                     }
                     else if (isMatch) {
-                        var token = jwt.sign(user, config.secret, {
+                        var token = jwt.sign(user.toJSON(), config.secret, {
                             expiresIn: '1h'
                         });
                         res.status(200).json({
