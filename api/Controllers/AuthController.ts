@@ -35,7 +35,7 @@ export class AuthController
             } else if (user) {
                 user.comparePassword(tempUser.password, function(err, isMatch) {
                     if (!isMatch) {
-                        return res.json(200).json({ msg: "incorrect password" });
+                        return res.status(200).json({ msg: "incorrect password" });
                     } else if (isMatch) {
                         let token = jwt.sign(user, config.secret, {
                             expiresIn: '1h'

@@ -21,7 +21,7 @@ var AuthController = (function () {
             else if (user) {
                 user.comparePassword(tempUser.password, function (err, isMatch) {
                     if (!isMatch) {
-                        return res.json(200).json({ msg: "incorrect password" });
+                        return res.status(200).json({ msg: "incorrect password" });
                     }
                     else if (isMatch) {
                         var token = jwt.sign(user, config.secret, {
