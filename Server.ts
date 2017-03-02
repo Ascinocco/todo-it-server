@@ -1,10 +1,12 @@
 import * as path from "path";
 import * as logger from "morgan";
 import * as express from "express";
-import * as mongoose from "mongoose";// might be problematic
+import * as jwt from "jsonwebtoken";
+import * as mongoose from "mongoose";
 import * as favicon from "serve-favicon";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
+
 
 import { CookieParserConfig } from "./api/config/CookieParserConfig";
 const AuthRoutes = require("./api/Routes/AuthRoutes");
