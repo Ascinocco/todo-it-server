@@ -14,6 +14,7 @@ export class UserController
             if (err) {
                 return res.status(500).json({msg: "Could not find you."});
             }
+
             user = user.toJSON();
             return res.status(200).json({msg: "here you are!", user: user});
         });
