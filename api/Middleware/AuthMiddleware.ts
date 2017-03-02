@@ -28,7 +28,7 @@ export class AuthMiddleware
                 if (err) {
                     return res.json({ msg: "Failed to authenticate" });
                 } else {
-                    next(decoded);
+                    next();
                 }
             });
         } else {

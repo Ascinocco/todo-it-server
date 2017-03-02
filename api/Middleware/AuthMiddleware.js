@@ -13,7 +13,7 @@ var AuthMiddleware = (function () {
                     return res.json({ msg: "Failed to authenticate" });
                 }
                 else {
-                    next(decoded);
+                    next();
                 }
             });
         }
