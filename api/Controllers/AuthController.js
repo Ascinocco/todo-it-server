@@ -25,7 +25,7 @@ var AuthController = (function () {
                     }
                     else if (isMatch) {
                         var token = jwt.sign(user.toJSON(), config.secret, {
-                            expiresIn: '1h'
+                            expiresIn: '8h'
                         });
                         res.status(200).json({
                             msg: "Welcome " + user.firstName,

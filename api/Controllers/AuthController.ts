@@ -39,7 +39,7 @@ export class AuthController
                     } else if (isMatch) {
 
                         let token = jwt.sign(user.toJSON(), config.secret, {
-                            expiresIn: '1h'
+                            expiresIn: '8h'
                         });
 
                         res.status(200).json({

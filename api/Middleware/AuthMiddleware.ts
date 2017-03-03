@@ -25,8 +25,14 @@ export class AuthMiddleware
 
         if (token) {
             jwt.verify(token, config.secret, function(err, decoded) {
-                if (err) {
-                    return res.json({ msg: "Failed to authenticate" });
+                if (err.name === "TokenExpiredError") {
+                    // code to invalidate token in database
+                    //kick user back to homepage and let them know they've been logged in
+                    // for 1 million years
+
+
+                } else if (err) {
+                    return res.json({ msg: "Failed to authenticate", err: err });
                 } else {
                     next();
                 }
