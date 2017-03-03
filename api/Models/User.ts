@@ -1,6 +1,6 @@
 // this will be written in js, as using typescript requires you to have separate
 // files, for an interface, schema and model. No thanks...
-let mongoose = require('mongoose');
+import * as mongoose from "mongoose";
 let Schema = mongoose.Schema;
 let bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR: number = 10;

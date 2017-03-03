@@ -1,4 +1,6 @@
-var mongoose = require('mongoose');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
 var SALT_WORK_FACTOR = 10;

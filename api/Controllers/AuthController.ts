@@ -3,6 +3,7 @@ import { NextFunction, Request, Response} from "express";
 import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
 let User = require('../Models/User');
+let Token = require('../Models/Token');
 let config = require('../config/config');
 
 
@@ -42,11 +43,21 @@ export class AuthController
                             expiresIn: '8h'
                         });
 
-                        res.status(200).json({
-                            msg: "Welcome " + user.firstName,
-                            user: user.toJSON(),
-                            token: token
-                        })
+                        // store new token in the db
+                        let dbToken = new Token();
+                        dbToken.value = token;
+
+                        dbToken.save(function(err, token){
+                            if (err) {
+                                return res.status(500).json({ success: false, msg: "Could not save token" });
+                            }
+
+                            return res.status(200).json({
+                                msg: "Welcome " + user.firstName,
+                                user: user.toJSON(),
+                                token: token.value
+                            });
+                        });
                     }
                 });
             }
@@ -55,11 +66,27 @@ export class AuthController
 
     public logout(req: Request, res: Response, next: NextFunction): any
     {
-        return res.status(200).json({msg: "Logout posted"});
+        // probably a better way to do this, however, for now I'm just going
+        // to grab the token here as well and revoke it
+        let token = req.body.token || req.query.token || req.headers['x-access-token'];
+        Token.findByToken(token, function(err, token) {
+            if (err) {
+                return res.status(500).json({ msg: "Error verifying token" });
+            }
+
+            token.revoke();
+            token.save();
+
+            // on the client if true, redirect to home
+            return res.status(200).json({ success: true, msg: "You have been logged out" });
+        });
+
     }
 
     public register(req: Request, res: Response, next: NextFunction): any
     {
+        const DUPLICATE_RECORD_ERROR: number = 11000;
+
         let user = new User({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -70,7 +97,13 @@ export class AuthController
 
         user.save(function(err, user) {
             if (err) {
-                return res.status(500).json({msg: "The server caught on fire..."});
+                if (err.code === DUPLICATE_RECORD_ERROR) {
+                    return res.status(500).json({ msg: "The email you entered is already in use." });
+                } else if (err.name === "ValidationError") {
+                    return res.status(500).json({ msg: "Missing email or Password" });
+                }
+                
+                return res.status(500).json({msg: "The server caught on fire...", err:err});
             }
         
             user = user.toJSON();
