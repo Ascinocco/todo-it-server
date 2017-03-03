@@ -59,7 +59,7 @@ export class AuthMiddleware
                         }
 
                         if (!token.valid) {
-                           return res.json({ msg: "Token expired", token: token });
+                           return res.json({ msg: "Token expired" });
                         }
 
                         return res.status(500).json({ msg: "Generic error.... to be replaced. Find me in AuthMiddlware.ts"});
