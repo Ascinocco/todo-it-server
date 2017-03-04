@@ -52,6 +52,9 @@ export class AuthController
                                 return res.status(500).json({ success: false, msg: "Could not save token" });
                             }
 
+                            // set token header
+                            res.set('x-access-token', token.value);
+
                             return res.status(200).json({
                                 msg: "Welcome " + user.firstName,
                                 user: user.toJSON(),
@@ -107,7 +110,6 @@ export class AuthController
             }
         
             user = user.toJSON();
-
             return res.status(200).json({ msg: "success!", user: user });
         });
         //return res.status(200).json({ msg: "failure"});

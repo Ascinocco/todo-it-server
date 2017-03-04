@@ -34,6 +34,7 @@ var AuthController = (function () {
                             if (err) {
                                 return res.status(500).json({ success: false, msg: "Could not save token" });
                             }
+                            res.set('x-access-token', token.value);
                             return res.status(200).json({
                                 msg: "Welcome " + user.firstName,
                                 user: user.toJSON(),
