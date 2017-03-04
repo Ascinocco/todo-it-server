@@ -52,6 +52,7 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
 userSchema.methods.toJSON = function() {
     let user  = this.toObject();
     delete user.password;
+    delete user.admin;
     return user;
 }
 

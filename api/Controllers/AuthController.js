@@ -37,8 +37,7 @@ var AuthController = (function () {
                             res.set('x-access-token', token.value);
                             return res.status(200).json({
                                 msg: "Welcome " + user.firstName,
-                                user: user.toJSON(),
-                                token: token.value
+                                user: user.toJSON()
                             });
                         });
                     }

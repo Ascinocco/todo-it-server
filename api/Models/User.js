@@ -38,6 +38,7 @@ userSchema.methods.comparePassword = function (candidatePassword, callback) {
 userSchema.methods.toJSON = function () {
     var user = this.toObject();
     delete user.password;
+    delete user.admin;
     return user;
 };
 var User = mongoose.model('User', userSchema);
