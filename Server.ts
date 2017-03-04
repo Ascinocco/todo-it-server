@@ -133,22 +133,10 @@ export class Server
      * jobs will also be written in here until I get it to work right
      */
     public registerJobs(): void
-    {
-        // define job rules
-        // let rule = new schedule.RecurrenceRule();
-        // rule.dayOfWeek = [ new(schedule.Range(0, 6)) ];
-        // rule.hour = 3;
-        // rule.minute = 0;
+    {        
 
-        // let job = schedule.scheduleJob(rule, function() {
-        //     // run db clear here
-        // });
-
-        // example rule
-        
         ClearTokenJob.register(this.db);
         
-
     }
 
     public bootstrapComplete(): void

@@ -15,7 +15,6 @@ export class ClearTokenJob
         rule.minute = [ new schedule.Range(0, 59) ];
 
         let job = schedule.scheduleJob(rule, function() {
-            console.log('My name is Jobert Jith');
             console.log('Clearing the old tokens...');
 
             Token.remove({ valid: false }, function(err, removedTokens){
@@ -24,8 +23,7 @@ export class ClearTokenJob
                     console.error('JOB FAILED. CHECK THE DB.');
                 }
 
-                console.log('TOKENS DELETED!!');
-
+                console.log('Tokens removed successfully!');
             });
         });
     }
