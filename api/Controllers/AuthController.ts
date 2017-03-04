@@ -57,8 +57,7 @@ export class AuthController
 
                             return res.status(200).json({
                                 msg: "Welcome " + user.firstName,
-                                user: user.toJSON(),
-                                token: token.value
+                                user: user.toJSON()
                             });
                         });
                     }
