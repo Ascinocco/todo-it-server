@@ -11,8 +11,8 @@ export class ClearTokenJob
         let rule = new schedule.RecurrenceRule();
 
         rule.dayOfWeek = [ new schedule.Range(0, 6) ];
-        rule.hour = [ new schedule.Range(0, 23) ];
-        rule.minute = [ new schedule.Range(0, 59) ];
+        rule.hour = 3;
+        rule.minute = 30;
 
         let job = schedule.scheduleJob(rule, function() {
             console.log('Clearing the old tokens...');

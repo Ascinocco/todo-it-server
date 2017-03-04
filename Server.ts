@@ -134,9 +134,7 @@ export class Server
      */
     public registerJobs(): void
     {        
-
         ClearTokenJob.register(this.db);
-        
     }
 
     public bootstrapComplete(): void
