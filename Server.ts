@@ -5,9 +5,11 @@ import * as jwt from "jsonwebtoken";
 import * as mongoose from "mongoose";
 import * as favicon from "serve-favicon";
 import * as bodyParser from "body-parser";
+import * as schedule from "node-schedule";
 import * as cookieParser from "cookie-parser";
 
 import { CookieParserConfig } from "./api/config/CookieParserConfig";
+import { ClearTokenJob } from "./jobs/ClearTokens/ClearTokenJob";
 
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
@@ -55,6 +57,9 @@ export class Server
 
         // register middleware
         this.registerMiddlware();
+
+        // register jobs
+        this.registerJobs();
 
         // just let devs know boostrap is complete
         this.bootstrapComplete();
@@ -121,6 +126,15 @@ export class Server
             console.log(err);
             next(err);
         });
+    }
+
+    /**
+     * register jobs
+     * jobs will also be written in here until I get it to work right
+     */
+    public registerJobs(): void
+    {        
+        ClearTokenJob.register(this.db);
     }
 
     public bootstrapComplete(): void

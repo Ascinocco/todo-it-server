@@ -5,6 +5,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var CookieParserConfig_1 = require("./api/config/CookieParserConfig");
+var ClearTokenJob_1 = require("./jobs/ClearTokens/ClearTokenJob");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
 var config = require("./api/config/config");
@@ -16,6 +17,7 @@ var Server = (function () {
         this.setDb(db);
         this.registerRoutes();
         this.registerMiddlware();
+        this.registerJobs();
         this.bootstrapComplete();
     }
     Server.boostrap = function (db, env) {
@@ -43,6 +45,9 @@ var Server = (function () {
             console.log(err);
             next(err);
         });
+    };
+    Server.prototype.registerJobs = function () {
+        ClearTokenJob_1.ClearTokenJob.register(this.db);
     };
     Server.prototype.bootstrapComplete = function () {
         console.log('*************************************');
