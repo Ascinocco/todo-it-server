@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var logger = require("morgan");
 var express = require("express");
 var bodyParser = require("body-parser");
-var schedule = require("node-schedule");
 var cookieParser = require("cookie-parser");
 var CookieParserConfig_1 = require("./api/config/CookieParserConfig");
+var ClearTokenJob_1 = require("./jobs/ClearTokens/ClearTokenJob");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
 var config = require("./api/config/config");
@@ -47,13 +47,7 @@ var Server = (function () {
         });
     };
     Server.prototype.registerJobs = function () {
-        var rule = new schedule.RecurrenceRule();
-        rule.dayOfWeek = [new schedule.Range(0, 6)];
-        rule.hour = [new schedule.Range(0, 23)];
-        rule.minute = [new schedule.Range(0, 59)];
-        var job = schedule.scheduleJob(rule, function () {
-            console.log('My name is Jobert Jith');
-        });
+        ClearTokenJob_1.ClearTokenJob.register(this.db);
     };
     Server.prototype.bootstrapComplete = function () {
         console.log('*************************************');
