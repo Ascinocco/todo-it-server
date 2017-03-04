@@ -5,6 +5,7 @@ import * as jwt from "jsonwebtoken";
 import * as mongoose from "mongoose";
 import * as favicon from "serve-favicon";
 import * as bodyParser from "body-parser";
+import * as schedule from "node-schedule";
 import * as cookieParser from "cookie-parser";
 
 import { CookieParserConfig } from "./api/config/CookieParserConfig";
@@ -55,6 +56,9 @@ export class Server
 
         // register middleware
         this.registerMiddlware();
+
+        // register jobs
+        this.registerJobs();
 
         // just let devs know boostrap is complete
         this.bootstrapComplete();
@@ -121,6 +125,34 @@ export class Server
             console.log(err);
             next(err);
         });
+    }
+
+    /**
+     * register jobs
+     * jobs will also be written in here until I get it to work right
+     */
+    public registerJobs(): void
+    {
+        // define job rules
+        // let rule = new schedule.RecurrenceRule();
+        // rule.dayOfWeek = [ new(schedule.Range(0, 6)) ];
+        // rule.hour = 3;
+        // rule.minute = 0;
+
+        // let job = schedule.scheduleJob(rule, function() {
+        //     // run db clear here
+        // });
+
+        // example rule
+        let rule = new schedule.RecurrenceRule();
+        rule.dayOfWeek = [ new schedule.Range(0, 6) ];
+        rule.hour = [ new schedule.Range(0, 23) ];
+        rule.minute = [ new schedule.Range(0, 59) ];
+
+        let job = schedule.scheduleJob(rule, function() {
+            console.log('My name is Jobert Jith');
+        });
+
     }
 
     public bootstrapComplete(): void

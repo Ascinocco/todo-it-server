@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var logger = require("morgan");
 var express = require("express");
 var bodyParser = require("body-parser");
+var schedule = require("node-schedule");
 var cookieParser = require("cookie-parser");
 var CookieParserConfig_1 = require("./api/config/CookieParserConfig");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
@@ -16,6 +17,7 @@ var Server = (function () {
         this.setDb(db);
         this.registerRoutes();
         this.registerMiddlware();
+        this.registerJobs();
         this.bootstrapComplete();
     }
     Server.boostrap = function (db, env) {
@@ -42,6 +44,15 @@ var Server = (function () {
             res.json({ msg: "Error", status: err.status || 500 });
             console.log(err);
             next(err);
+        });
+    };
+    Server.prototype.registerJobs = function () {
+        var rule = new schedule.RecurrenceRule();
+        rule.dayOfWeek = [new schedule.Range(0, 6)];
+        rule.hour = [new schedule.Range(0, 23)];
+        rule.minute = [new schedule.Range(0, 59)];
+        var job = schedule.scheduleJob(rule, function () {
+            console.log('My name is Jobert Jith');
         });
     };
     Server.prototype.bootstrapComplete = function () {
