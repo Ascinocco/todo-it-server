@@ -85,6 +85,15 @@ export class Server
 
         // cookie parser secret
         this.app.use(cookieParser(CookieParserConfig[this.env]));
+
+        // allow CORS
+        // TODO: move this out into its own middleware
+        this.app.use(function(req: express.Request, res: express.Response, next: express.NextFunction) {
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
+            res.header('Access-Control-Expose-Headers', '*');
+            next();
+        });
     }
 
     /**
