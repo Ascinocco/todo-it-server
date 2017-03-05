@@ -89,7 +89,6 @@ export class Server
         this.app.use(cookieParser(CookieParserConfig[this.env]));
 
         // allow CORS
-        // TODO: move this out into its own middleware
         this.app.use(CORSMiddleware.allowCORS);
     }
 
