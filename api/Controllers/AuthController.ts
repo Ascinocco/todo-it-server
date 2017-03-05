@@ -28,11 +28,11 @@ export class AuthController
 
         User.findOne({ email: tempUser.email }, function(err, user) {
             if (err) {
-                return res.status(500).json({ success: false, msg: "The server farted on your request" });
+                return res.status(200).json({ success: false, msg: "The server farted on your request" });
             }
 
             if (!user) {
-                return res.status(400).json({ msg: "Could not find your account" });
+                return res.status(200).json({ msg: "Could not find your account" });
             } else if (user) {
                 user.comparePassword(tempUser.password, function(err, isMatch) {
                     if (!isMatch) {
@@ -49,7 +49,7 @@ export class AuthController
 
                         dbToken.save(function(err, token){
                             if (err) {
-                                return res.status(500).json({ success: false, msg: "Could not save token" });
+                                return res.status(200).json({ success: false, msg: "Could not save token" });
                             }
 
                             // set token header
