@@ -98,28 +98,56 @@ export class AuthController
     {
         const DUPLICATE_RECORD_ERROR: number = 11000;
 
+        if (req.body.user.password !== req.body.confirmPassword) {
+            return res.status(200).json({ 
+                success: false,
+                msg: "Passwords do not match",
+                password: req.body.user.password,
+                confirmPassword: req.body.password
+             })
+        }
+
         let user = new User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            password: req.body.password,
+            firstName: req.body.user.firstName,
+            lastName: req.body.user.lastName,
+            email: req.body.user.email,
+            password: req.body.user.password,
             admin: false
         });
 
         user.save(function(err, user) {
             if (err) {
                 if (err.code === DUPLICATE_RECORD_ERROR) {
-                    return res.status(500).json({ msg: "The email you entered is already in use." });
+                    return res.status(200).json({ success: false, msg: "The email you entered is already in use." });
                 } else if (err.name === "ValidationError") {
-                    return res.status(500).json({ msg: "Missing email or Password" });
+                    return res.status(200).json({ success: false, msg: "Missing email or Password" });
                 }
                 
-                return res.status(500).json({msg: "The server caught on fire...", err:err});
+                return res.status(200).json({ success: false, msg: "The server caught on fire...", err:err});
             }
         
-            user = user.toJSON();
-            return res.status(200).json({ msg: "success!", user: user });
+            let token = jwt.sign(user.toJSON(), config.secret, {
+                            expiresIn: '8h'
+                        });
+
+            // store new token in the db
+            let dbToken = new Token();
+            dbToken.value = token;
+
+            dbToken.save(function(err, token){
+                if (err) {
+                    return res.status(500).json({ success: false, msg: "Could not save token" });
+                }
+
+                // set token header
+                res.set('x-access-token', token.value);
+
+                return res.status(200).json({
+                        success: true,
+                        msg: "Your account has been created. Start Todoing!",
+                        user: user.toJSON()
+                     });
+            });
         });
-        //return res.status(200).json({ msg: "failure"});
     }
 }
