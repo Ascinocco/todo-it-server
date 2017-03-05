@@ -11,6 +11,8 @@ import * as cookieParser from "cookie-parser";
 import { CookieParserConfig } from "./api/config/CookieParserConfig";
 import { ClearTokenJob } from "./jobs/ClearTokens/ClearTokenJob";
 
+import { CORSMiddleware } from './api/Middleware/CORSMiddleware';
+
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
 let config = require("./api/config/config");
@@ -88,13 +90,7 @@ export class Server
 
         // allow CORS
         // TODO: move this out into its own middleware
-        this.app.use(function(req: express.Request, res: express.Response, next: express.NextFunction) {
-            res.header('Access-Control-Allow-Origin', '*');
-            res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
-            res.header('Access-Control-Expose-Headers', 'Connection,Content-Length,Content-Type,Date,ETag,X-Powered-By,x-access-token');
-            res.header('Access-Control-Allow-Headers', 'Connection,Content-Length,Content-Type,Date,ETag,X-Powered-By,x-access-token');
-            next();
-        });
+        this.app.use(CORSMiddleware.allowCORS);
     }
 
     /**
