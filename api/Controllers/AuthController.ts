@@ -28,7 +28,7 @@ export class AuthController
 
         User.findOne({ email: tempUser.email }, function(err, user) {
             if (err) {
-                return res.status(500).json({ msg: "The server farted on your request" });
+                return res.status(500).json({ success: false, msg: "The server farted on your request" });
             }
 
             if (!user) {
@@ -36,7 +36,7 @@ export class AuthController
             } else if (user) {
                 user.comparePassword(tempUser.password, function(err, isMatch) {
                     if (!isMatch) {
-                        return res.status(200).json({ msg: "incorrect password" });
+                        return res.status(200).json({ success: false, msg: "incorrect password" });
                     } else if (isMatch) {
 
                         let token = jwt.sign(user.toJSON(), config.secret, {
@@ -56,6 +56,7 @@ export class AuthController
                             res.set('x-access-token', token.value);
 
                             return res.status(200).json({
+                                success: true,
                                 msg: "Welcome " + user.firstName,
                                 user: user.toJSON()
                             });
@@ -71,18 +72,26 @@ export class AuthController
         // probably a better way to do this, however, for now I'm just going
         // to grab the token here as well and revoke it
         let token = req.body.token || req.query.token || req.headers['x-access-token'];
-        Token.findByToken(token, function(err, token) {
-            if (err) {
-                return res.status(500).json({ msg: "Error verifying token" });
-            }
 
-            token.revoke();
-            token.save();
+        if (token) {
+            Token.findByToken(token, function(err, token) {
+                if (err) {
+                    return res.status(500).json({ success: false, msg: "Error verifying token" });
+                }
 
-            // on the client if true, redirect to home
-            return res.status(200).json({ success: true, msg: "You have been logged out" });
-        });
-
+                try {
+                    token.revoke();
+                    token.save();
+                } catch (err) {
+                    return res.status(200).json({ success: false, msg: "Purposefully generic error, check AuthController" });
+                }
+                
+                // on the client if true, redirect to home
+                return res.status(200).json({ success: true, msg: "You have been logged out" });
+            });
+        } else {
+            return res.status(500).json({ success: false, msg: "Could not retrieve token"});
+        }
     }
 
     public register(req: Request, res: Response, next: NextFunction): any

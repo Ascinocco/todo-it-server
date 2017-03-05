@@ -14,7 +14,7 @@ var AuthController = (function () {
         };
         User.findOne({ email: tempUser.email }, function (err, user) {
             if (err) {
-                return res.status(500).json({ msg: "The server farted on your request" });
+                return res.status(500).json({ success: false, msg: "The server farted on your request" });
             }
             if (!user) {
                 return res.status(400).json({ msg: "Could not find your account" });
@@ -22,7 +22,7 @@ var AuthController = (function () {
             else if (user) {
                 user.comparePassword(tempUser.password, function (err, isMatch) {
                     if (!isMatch) {
-                        return res.status(200).json({ msg: "incorrect password" });
+                        return res.status(200).json({ success: false, msg: "incorrect password" });
                     }
                     else if (isMatch) {
                         var token = jwt.sign(user.toJSON(), config.secret, {
@@ -36,6 +36,7 @@ var AuthController = (function () {
                             }
                             res.set('x-access-token', token.value);
                             return res.status(200).json({
+                                success: true,
                                 msg: "Welcome " + user.firstName,
                                 user: user.toJSON()
                             });
@@ -47,14 +48,24 @@ var AuthController = (function () {
     };
     AuthController.prototype.logout = function (req, res, next) {
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
-        Token.findByToken(token, function (err, token) {
-            if (err) {
-                return res.status(500).json({ msg: "Error verifying token" });
-            }
-            token.revoke();
-            token.save();
-            return res.status(200).json({ success: true, msg: "You have been logged out" });
-        });
+        if (token) {
+            Token.findByToken(token, function (err, token) {
+                if (err) {
+                    return res.status(500).json({ success: false, msg: "Error verifying token" });
+                }
+                try {
+                    token.revoke();
+                    token.save();
+                }
+                catch (err) {
+                    return res.status(200).json({ success: false, msg: "Purposefully generic error, check AuthController" });
+                }
+                return res.status(200).json({ success: true, msg: "You have been logged out" });
+            });
+        }
+        else {
+            return res.status(500).json({ success: false, msg: "Could not retrieve token" });
+        }
     };
     AuthController.prototype.register = function (req, res, next) {
         var DUPLICATE_RECORD_ERROR = 11000;
