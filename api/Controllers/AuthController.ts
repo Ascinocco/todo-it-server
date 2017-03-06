@@ -90,7 +90,7 @@ export class AuthController
                 return res.status(200).json({ success: true, msg: "You have been logged out" });
             });
         } else {
-            return res.status(500).json({ success: false, msg: "Could not retrieve token"});
+            return res.status(200).json({ success: false, msg: "Could not retrieve token"});
         }
     }
 

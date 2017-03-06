@@ -22,10 +22,79 @@ export class UserController
 
     public update(req: Request, res: Response, next: NextFunction): any
     {
-        let user = {
-            name: "Anthony Mario Scinocco",
-            email: "anthony@mail.com"
+        let user = req.body.user;
+        let confirmPassword = req.body.confirmPassword;
+
+        if (user.password) {
+            if (user.password === confirmPassword) {
+                User.findOneAndUpdate({ email: user.email }, 
+                    { $set: 
+                        { 
+                            email: user.email,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            updated_at: Date.now
+                    }
+                },
+                {
+                    new: true
+                },
+                function(err, user) {
+                    if (err) {
+                        return res.status(200)
+                        .json({
+                            success: false,
+                            msg: "Error update user"
+                        });
+                    }
+
+                    return res.status(200)
+                        .json({
+                            success: true,
+                            msg: "Your account has been updated!",
+                            user: user
+                        });
+                });
+                } else {
+                    return res.status(200)
+                        .json({
+                            success: false,
+                            msg: "Passwords do not match"
+                        });
+                }
+        } else {
+            User.findOneAndUpdate({ email: user.email }, 
+            { $set: 
+                { 
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    updated_at: Date.now
+                }
+            },
+            {
+                new: true
+            },
+             function(err, user) {
+                if (err) {
+                    return res.status(200)
+                    .json({
+                        success: false,
+                        msg: "Error update user"
+                    });
+                }
+
+                return res.status(200)
+                    .json({
+                        success: true,
+                        msg: "Your account has been updated!",
+                        user: user
+                    });
+             });
         }
+        
+
+
         res.status(200)
             .json(user);
     }

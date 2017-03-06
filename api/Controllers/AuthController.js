@@ -64,7 +64,7 @@ var AuthController = (function () {
             });
         }
         else {
-            return res.status(500).json({ success: false, msg: "Could not retrieve token" });
+            return res.status(200).json({ success: false, msg: "Could not retrieve token" });
         }
     };
     AuthController.prototype.register = function (req, res, next) {

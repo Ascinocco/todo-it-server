@@ -1,3 +1,4 @@
+import * as cors from "cors";
 import * as path from "path";
 import * as logger from "morgan";
 import * as express from "express";
@@ -89,7 +90,8 @@ export class Server
         this.app.use(cookieParser(CookieParserConfig[this.env]));
 
         // allow CORS
-        this.app.use(CORSMiddleware.allowCORS);
+        // this.app.use(CORSMiddleware.allowCORS);
+        this.app.use(cors());
     }
 
     /**

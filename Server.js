@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var cors = require("cors");
 var logger = require("morgan");
 var express = require("express");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var CookieParserConfig_1 = require("./api/config/CookieParserConfig");
 var ClearTokenJob_1 = require("./jobs/ClearTokens/ClearTokenJob");
-var CORSMiddleware_1 = require("./api/Middleware/CORSMiddleware");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
 var config = require("./api/config/config");
@@ -31,7 +31,7 @@ var Server = (function () {
             extended: true
         }));
         this.app.use(cookieParser(CookieParserConfig_1.CookieParserConfig[this.env]));
-        this.app.use(CORSMiddleware_1.CORSMiddleware.allowCORS);
+        this.app.use(cors());
     };
     Server.prototype.setDb = function (db) {
         this.db = db;
