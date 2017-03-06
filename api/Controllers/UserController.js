@@ -17,6 +17,7 @@ var UserController = (function () {
     UserController.prototype.update = function (req, res, next) {
         var user = req.body.user;
         var confirmPassword = req.body.confirmPassword;
+        console.log('Making it to user controller');
         if (user.password) {
             if (user.password === confirmPassword) {
                 User.findOneAndUpdate({ email: user.email }, { $set: {
@@ -52,16 +53,18 @@ var UserController = (function () {
             }
         }
         else {
+            console.log('first else -----');
             User.findOneAndUpdate({ email: user.email }, { $set: {
                     email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
-                    updated_at: Date.now
+                    updated_at: Date.now()
                 }
             }, {
                 new: true
             }, function (err, user) {
                 if (err) {
+                    console.log(err);
                     return res.status(200)
                         .json({
                         success: false,
@@ -72,7 +75,7 @@ var UserController = (function () {
                     .json({
                     success: true,
                     msg: "Your account has been updated!",
-                    user: user
+                    user: user.toJSON()
                 });
             });
         }
