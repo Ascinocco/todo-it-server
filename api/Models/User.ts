@@ -41,6 +41,26 @@ userSchema.pre('save', function(next) {
     });
 });
 
+userSchema.methods.hashPassword = function(passwordToHash) {
+    let user = this;
+    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+        if (err) { 
+            console.error("ERROR HASHING PASSWORD, COULD NOT GENERATE SALT");
+            return false;
+         }
+
+        //hash the pw with out new salt
+        bcrypt.hash(passwordToHash, salt, function(err, hash) {
+            if (err) { 
+                console.error("ERROR HASHING PASSWORD, COULD NOT HASH IT");
+                return false;
+            }
+        
+            return hash;
+        });
+    })
+}
+
 userSchema.methods.comparePassword = function(candidatePassword, callback) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
         if (err) return callback(err);

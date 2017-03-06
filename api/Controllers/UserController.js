@@ -15,49 +15,59 @@ var UserController = (function () {
         });
     };
     UserController.prototype.update = function (req, res, next) {
-        var user = req.body.user;
+        var tempUser = req.body.user;
         var confirmPassword = req.body.confirmPassword;
-        console.log('Making it to user controller');
-        if (user.password) {
-            if (user.password === confirmPassword) {
-                User.findOneAndUpdate({ email: user.email }, { $set: {
-                        email: user.email,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        updated_at: Date.now
-                    }
-                }, {
-                    new: true
-                }, function (err, user) {
+        var newPassword = req.body.newPassword;
+        if (tempUser.password) {
+            User.findOne({ email: tempUser.email }, function (err, user) {
+                if (err) {
+                    return res.status(200)
+                        .json({
+                        success: false,
+                        msg: "Could not find your account"
+                    });
+                }
+                user.comparePassword(tempUser.password, function (err, isMatch) {
                     if (err) {
                         return res.status(200)
                             .json({
                             success: false,
-                            msg: "Error update user"
+                            msg: "Error Comparing Passwords"
                         });
                     }
-                    return res.status(200)
-                        .json({
-                        success: true,
-                        msg: "Your account has been updated!",
-                        user: user
-                    });
+                    if (isMatch) {
+                        if (confirmPassword === newPassword) {
+                            User.findOne({ email: tempUser.email }, function (err, user) {
+                                user = tempUser;
+                                user["password"] = newPassword;
+                                user["updated_at"] = Date.now();
+                                user.save();
+                            });
+                        }
+                        else {
+                            return res.status(200)
+                                .json({
+                                success: false,
+                                msg: "Your Confirmation password and new password do not match"
+                            });
+                        }
+                    }
+                    else {
+                        return res.status(200)
+                            .json({
+                            success: false,
+                            msg: "Incorrect Password"
+                        });
+                    }
                 });
-            }
-            else {
-                return res.status(200)
-                    .json({
-                    success: false,
-                    msg: "Passwords do not match"
-                });
-            }
+            });
         }
         else {
             console.log('first else -----');
-            User.findOneAndUpdate({ email: user.email }, { $set: {
-                    email: user.email,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
+            User.findOneAndUpdate({ email: tempUser.email }, { $set: {
+                    email: tempUser.email,
+                    firstName: tempUser.firstName,
+                    lastName: tempUser.lastName,
                     updated_at: Date.now()
                 }
             }, {
