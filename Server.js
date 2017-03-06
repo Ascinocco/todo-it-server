@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var cors = require("cors");
 var logger = require("morgan");
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -31,6 +32,7 @@ var Server = (function () {
             extended: true
         }));
         this.app.use(cookieParser(CookieParserConfig_1.CookieParserConfig[this.env]));
+        this.app.use(cors());
         this.app.use(CORSMiddleware_1.CORSMiddleware.allowCORS);
     };
     Server.prototype.setDb = function (db) {

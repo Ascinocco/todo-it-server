@@ -90,13 +90,8 @@ export class Server
         this.app.use(cookieParser(CookieParserConfig[this.env]));
 
         // allow CORS
+        this.app.use(cors());
         this.app.use(CORSMiddleware.allowCORS);
-        // this.app.use(cors({
-        //     "origin": "*",
-        //     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-        //     "allowHeaders": "Connection,Content-Length,Content-Type,Date,ETag,X-Powered-By,x-access-token",
-        //     "exposeHeaders": "Connection,Content-Length,Content-Type,Date,ETag,X-Powered-By,x-access-token"
-        // }));
     }
 
     /**
