@@ -76,8 +76,6 @@ var UserController = (function () {
                 });
             });
         }
-        res.status(200)
-            .json(user);
     };
     UserController.prototype.deleteAccount = function (req, res, next) {
         var userId = req.params._id;

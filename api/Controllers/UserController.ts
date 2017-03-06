@@ -92,11 +92,6 @@ export class UserController
                     });
              });
         }
-        
-
-
-        res.status(200)
-            .json(user);
     }
 
     public deleteAccount(req: Request, res: Response, next: NextFunction): any

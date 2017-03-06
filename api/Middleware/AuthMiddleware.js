@@ -8,6 +8,7 @@ var AuthMiddleware = (function () {
     }
     AuthMiddleware.checkToken = function (req, res, next) {
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
+        console.log(token);
         if (token) {
             jwt.verify(token, config.secret, function (err, decoded) {
                 if (err) {
@@ -36,7 +37,6 @@ var AuthMiddleware = (function () {
                         if (!token.valid) {
                             return res.json({ msg: "Token expired" });
                         }
-                        return res.status(500).json({ msg: "Generic error.... to be replaced. Find me in AuthMiddlware.ts" });
                     });
                 }
             });
