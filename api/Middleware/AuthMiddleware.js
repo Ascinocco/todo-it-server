@@ -8,7 +8,6 @@ var AuthMiddleware = (function () {
     }
     AuthMiddleware.checkToken = function (req, res, next) {
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
-        console.log(token);
         if (token) {
             jwt.verify(token, config.secret, function (err, decoded) {
                 if (err) {
