@@ -1,6 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import * as mongoose from "mongoose";
+import * as async from "async";
 let User = require('../Models/User');
+import * as mongoose from "mongoose";
+import { NextFunction, Request, Response } from "express";
+
 
 export class UserController
 {
@@ -27,99 +29,52 @@ export class UserController
         let newPassword = req.body.newPassword;
 
         if (tempUser.password) {
-            User.findOne({ email: tempUser.email }, function(err, user){
-                if (err) {
+           if (newPassword === confirmPassword) {
+                async.waterfall([
+                    function (done) {
+                        User.findOne({ email: tempUser.email }, function (err, user) {
+                            if (err) {
+                                return res.status(200)
+                                    .json({
+                                        success: false,
+                                        msg: "I couldn't find you... Are you real?"
+                                    });
+                            }
+
+                            user.firstName = tempUser.firstName;
+                            user.lastName = tempUser.lastName;
+                            user.email = tempUser.email;
+                            user.password = newPassword;
+
+                            user.save(function(err) {
+                                if (err) {
+                                    return res.status(200)
+                                        .json({
+                                            success: false,
+                                            msg: "I couldn't save your updates... Sorry about that."
+                                        });
+                                }
+
+                                done (err, user);
+                            });
+                        });
+                    }, function (user, done) {
+                        done(user)
+                    }
+                ], function(err) {
                     return res.status(200)
                         .json({
-                            success: false,
-                            msg: "Could not find your account"
+                            success: true,
+                            msg: "Your account has been updated!"
                         });
-                }
-
-                // compare the password
-                user.comparePassword(tempUser.password, function(err, isMatch){
-                    if (err) {
-                        return res.status(200)
-                            .json({
-                                success: false,
-                                msg: "Error Comparing Passwords"
-                            });
-                    }
-
-                    if (isMatch) {
-                        if (confirmPassword === newPassword){
-
-                            User.findOne({ email: tempUser.email }, function(err, user) {
-                                user = tempUser;
-                                user["password"] = newPassword;
-                                user["updated_at"] = Date.now();
-                                user.save()
-                            })
-
-                            // console.log(user);
-                            // user = tempUser;
-                            // user["password"] = newPassword;
-                            // user.save();
-
-                            // newPassword = User.hashPassword(newPassword);
-                            // if (newPassword === false) {
-                            //     return res.status(200)
-                            //         .json({
-                            //             success: false,
-                            //             msg: "Could not hash password"
-                            //         });
-                            // }
-
-                            // console.log(newPassword);
-
-                            // newPassword = user.hashPassword(newPassword);
-
-                            // User.findOneAndUpdate({ email: tempUser.email },
-                            // {
-                            //     $set: {
-                            //         email: tempUser.email,
-                            //         firstName: tempUser.firstName,
-                            //         lastName: tempUser.lastName,
-                            //         password: newPassword,
-                            //         updated_at: Date.now()
-                            //     }
-                            // }, {
-                            //     new: true
-                            // }, function(err, user) {
-                            //     if (err) {
-                            //         console.log(err);
-                            //         return res.status(200)
-                            //             .json({
-                            //                 success: false,
-                            //                 msg: "Error update user"
-                            //             });
-                            //     }
-
-                            //     return res.status(200)
-                            //         .json({
-                            //             success: true,
-                            //             msg: "Your account has been updated!",
-                            //             user: user.toJSON()
-                            //         });
-                            // });
-                            
-                        } else {
-                            return res.status(200)
-                                .json({
-                                    success: false,
-                                    msg: "Your Confirmation password and new password do not match"
-                                });  
-                        }
-                    } else {
-                        return res.status(200)
-                            .json({
-                                success: false,
-                                msg: "Incorrect Password"
-                            });
-                    }
                 });
-
-            });
+           } else {
+               return res.status(200)
+                    .json({
+                        success: false,
+                        msg: "You new password does not match the confirmation"
+                    });
+           }
         } else {
             console.log('first else -----')
             User.findOneAndUpdate({ email: tempUser.email }, 

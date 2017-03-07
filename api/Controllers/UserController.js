@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var async = require("async");
 var User = require('../Models/User');
 var UserController = (function () {
     function UserController() {
@@ -19,48 +20,50 @@ var UserController = (function () {
         var confirmPassword = req.body.confirmPassword;
         var newPassword = req.body.newPassword;
         if (tempUser.password) {
-            User.findOne({ email: tempUser.email }, function (err, user) {
-                if (err) {
+            if (newPassword === confirmPassword) {
+                async.waterfall([
+                    function (done) {
+                        User.findOne({ email: tempUser.email }, function (err, user) {
+                            if (err) {
+                                return res.status(200)
+                                    .json({
+                                    success: false,
+                                    msg: "I couldn't find you... Are you real?"
+                                });
+                            }
+                            user.firstName = tempUser.firstName;
+                            user.lastName = tempUser.lastName;
+                            user.email = tempUser.email;
+                            user.password = newPassword;
+                            user.save(function (err) {
+                                if (err) {
+                                    return res.status(200)
+                                        .json({
+                                        success: false,
+                                        msg: "I couldn't save your updates... Sorry about that."
+                                    });
+                                }
+                                done(err, user);
+                            });
+                        });
+                    }, function (user, done) {
+                        done(user);
+                    }
+                ], function (err) {
                     return res.status(200)
                         .json({
-                        success: false,
-                        msg: "Could not find your account"
+                        success: true,
+                        msg: "Your account has been updated!"
                     });
-                }
-                user.comparePassword(tempUser.password, function (err, isMatch) {
-                    if (err) {
-                        return res.status(200)
-                            .json({
-                            success: false,
-                            msg: "Error Comparing Passwords"
-                        });
-                    }
-                    if (isMatch) {
-                        if (confirmPassword === newPassword) {
-                            User.findOne({ email: tempUser.email }, function (err, user) {
-                                user = tempUser;
-                                user["password"] = newPassword;
-                                user["updated_at"] = Date.now();
-                                user.save();
-                            });
-                        }
-                        else {
-                            return res.status(200)
-                                .json({
-                                success: false,
-                                msg: "Your Confirmation password and new password do not match"
-                            });
-                        }
-                    }
-                    else {
-                        return res.status(200)
-                            .json({
-                            success: false,
-                            msg: "Incorrect Password"
-                        });
-                    }
                 });
-            });
+            }
+            else {
+                return res.status(200)
+                    .json({
+                    success: false,
+                    msg: "You new password does not match the confirmation"
+                });
+            }
         }
         else {
             console.log('first else -----');
