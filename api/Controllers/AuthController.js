@@ -51,19 +51,23 @@ var AuthController = (function () {
         if (token) {
             Token.findByToken(token, function (err, token) {
                 if (err) {
-                    return res.status(500).json({ success: false, msg: "Error verifying token" });
+                    console.error('Error verifying token');
+                    return res.status(200).json({ success: false, msg: "Error verifying token" });
                 }
                 try {
                     token.revoke();
                     token.save();
                 }
                 catch (err) {
+                    console.error('error revoking and saving token');
                     return res.status(200).json({ success: false, msg: "Purposefully generic error, check AuthController" });
                 }
+                console.log('Supposedly user is logged out.');
                 return res.status(200).json({ success: true, msg: "You have been logged out" });
             });
         }
         else {
+            console.log('No token found');
             return res.status(200).json({ success: false, msg: "Could not retrieve token" });
         }
     };
