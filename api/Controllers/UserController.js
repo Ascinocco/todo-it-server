@@ -49,12 +49,27 @@ var UserController = (function () {
                     }, function (user, done) {
                         done(user);
                     }
-                ], function (err) {
-                    return res.status(200)
-                        .json({
-                        success: true,
-                        msg: "Your account has been updated!"
-                    });
+                ], function (user) {
+                    try {
+                        var updatedUser = {};
+                        updatedUser["firstName"] = user["firstName"];
+                        updatedUser["lastName"] = user["lastName"];
+                        updatedUser["email"] = user["email"];
+                        return res.status(200)
+                            .json({
+                            success: true,
+                            msg: "Your account has been updated!",
+                            user: updatedUser
+                        });
+                    }
+                    catch (err) {
+                        console.log('Error returning updates');
+                        return res.status(200)
+                            .json({
+                            success: false,
+                            msg: "Error loading your updates. Please refresh the page to see your changes"
+                        });
+                    }
                 });
             }
             else {
