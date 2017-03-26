@@ -1,6 +1,5 @@
-import { UserController } from '../Controllers/UserController';
 import { AuthMiddleware } from '../Middleware/AuthMiddleware';
-import * as jwt from "jsonwebtoken";
+import { UserController } from '../Controllers/UserController';
 
 const userController = new UserController();
 
@@ -9,8 +8,9 @@ var router = express.Router();
 
 router.use(AuthMiddleware.checkToken);
 
-router.get('/get/:_id', userController.getUser);
-router.post('/update', userController.update);
+router.post('/update/account', userController.updateAccount);
+router.post('/update/settings', userController.updateSettings);
+router.get('/:_id', userController.getUser);
 router.delete('/delete/:_id', userController.deleteAccount);
 
 module.exports = router;

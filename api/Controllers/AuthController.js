@@ -2,115 +2,146 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = require("jsonwebtoken");
 var User = require('../Models/User');
-var Token = require('../Models/Token');
 var App_1 = require("../../config/App");
 var AuthController = (function () {
     function AuthController() {
     }
     AuthController.prototype.login = function (req, res, next) {
-        var tempUser = {
-            email: req.body.email,
-            password: req.body.password
-        };
-        User.findOne({ email: tempUser.email }, function (err, user) {
+        var credentials = { email: req.body.email, password: req.body.password };
+        User.findByEmail(credentials.email, function (err, user) {
             if (err) {
-                return res.status(200).json({ success: false, msg: "The server farted on your request" });
+                console.error(err);
+                return res.json({
+                    success: false,
+                    msg: "An error occured while trying to log you in. Please try again."
+                });
             }
-            if (!user) {
-                return res.status(200).json({ msg: "Could not find your account" });
-            }
-            else if (user) {
-                user.comparePassword(tempUser.password, function (err, isMatch) {
-                    if (!isMatch) {
-                        return res.status(200).json({ success: false, msg: "incorrect password" });
-                    }
-                    else if (isMatch) {
-                        var token = jwt.sign(user.toJSON(), App_1.AppConfig.secret, {
-                            expiresIn: '8h'
+            if (user) {
+                user.comparePassword(credentials.password, function (err, isMatch) {
+                    if (err) {
+                        console.error(err);
+                        return res.json({
+                            success: false,
+                            msg: "An error occured while verifying your account info"
                         });
-                        var dbToken = new Token();
-                        dbToken.value = token;
-                        dbToken.save(function (err, token) {
+                    }
+                    if (isMatch) {
+                        var token_1 = jwt.sign(user.toJSON(), App_1.AppConfig.secret, {
+                            expiresIn: '30d'
+                        });
+                        user.addToken(token_1);
+                        user.save(function (err, user) {
                             if (err) {
-                                return res.status(200).json({ success: false, msg: "Could not save token" });
+                                console.error(err);
+                                return res.json({
+                                    success: false,
+                                    msg: "An error occured while logging you in. Please try again."
+                                });
                             }
-                            res.set('x-access-token', token.value);
-                            return res.status(200).json({
+                            res.set('x-access-token', token_1);
+                            res.set('user', user.toJSON());
+                            return res.json({
                                 success: true,
                                 msg: "Welcome " + user.firstName,
                                 user: user.toJSON()
                             });
                         });
                     }
+                    else {
+                        return res.json({
+                            success: false,
+                            msg: "The password you provided does not match the password we have on file for you."
+                        });
+                    }
+                });
+            }
+            else {
+                return res.json({
+                    success: false,
+                    msg: "We could not find your account"
                 });
             }
         });
     };
     AuthController.prototype.logout = function (req, res, next) {
-        var token = req.body.token || req.query.token || req.headers['x-access-token'];
-        if (token) {
-            Token.findByToken(token, function (err, token) {
+        var token = req["currentToken"];
+        var user = req["currentUser"];
+        if (token && user) {
+            user.revokeToken();
+            user.save(function (err) {
                 if (err) {
-                    console.error('Error verifying token');
-                    return res.status(200).json({ success: false, msg: "Error verifying token" });
+                    console.error(err);
+                    return res.json({
+                        success: false,
+                        msg: "An error occured while loggin you out. Please try again"
+                    });
                 }
-                try {
-                    token.revoke();
-                    token.save();
-                }
-                catch (err) {
-                    console.error('error revoking and saving token');
-                    return res.status(200).json({ success: false, msg: "Purposefully generic error, check AuthController" });
-                }
-                console.log('Supposedly user is logged out.');
-                return res.status(200).json({ success: true, msg: "You have been logged out" });
+                return res.json({
+                    success: true,
+                    msg: "You have been logged out. Goodbye!"
+                });
             });
         }
         else {
-            console.log('No token found');
-            return res.status(200).json({ success: false, msg: "Could not retrieve token" });
+            return res.json({
+                success: false,
+                msg: "We could not verify your account"
+            });
         }
     };
     AuthController.prototype.register = function (req, res, next) {
+        var registerForm = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword,
+        };
         var DUPLICATE_RECORD_ERROR = 11000;
-        if (req.body.user.password !== req.body.confirmPassword) {
-            return res.status(200).json({
+        if (registerForm.password !== registerForm.confirmPassword) {
+            return res.json({
                 success: false,
-                msg: "Passwords do not match",
-                password: req.body.user.password,
-                confirmPassword: req.body.password
+                msg: "The passwords you entered do not match"
             });
         }
         var user = new User({
-            firstName: req.body.user.firstName,
-            lastName: req.body.user.lastName,
-            email: req.body.user.email,
-            password: req.body.user.password,
-            admin: false
+            firstName: registerForm.firstName,
+            lastName: registerForm.lastName,
+            email: registerForm.email,
+            password: registerForm.password,
         });
         user.save(function (err, user) {
             if (err) {
+                console.error(err);
                 if (err.code === DUPLICATE_RECORD_ERROR) {
-                    return res.status(200).json({ success: false, msg: "The email you entered is already in use." });
+                    return res.json({
+                        success: false,
+                        msg: "The email you entered is already in use"
+                    });
                 }
-                else if (err.name === "ValidationError") {
-                    return res.status(200).json({ success: false, msg: "Missing email or Password" });
+                else {
+                    return res.json({
+                        success: false,
+                        msg: "An error occured creating your account",
+                    });
                 }
-                return res.status(200).json({ success: false, msg: "The server caught on fire...", err: err });
             }
             var token = jwt.sign(user.toJSON(), App_1.AppConfig.secret, {
-                expiresIn: '8h'
+                expiresIn: '30d'
             });
-            var dbToken = new Token();
-            dbToken.value = token;
-            dbToken.save(function (err, token) {
+            user.addToken(token);
+            user.save(function (err, user) {
                 if (err) {
-                    return res.status(500).json({ success: false, msg: "Could not save token" });
+                    return res.json({
+                        success: false,
+                        msg: "Error authenticating your new account. Please try again"
+                    });
                 }
-                res.set('x-access-token', token.value);
-                return res.status(200).json({
+                res.set('x-access-token', token);
+                res.set('user', user.toJSON());
+                return res.json({
                     success: true,
-                    msg: "Your account has been created. Start Todoing!",
+                    msg: "You\'re account has been created. Start todoing!",
                     user: user.toJSON()
                 });
             });

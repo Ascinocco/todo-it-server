@@ -1,5 +1,5 @@
-import * as schedule from "node-schedule";
 import * as mongoose from "mongoose";
+import * as schedule from "node-schedule";
 let Token = require('../../api/Models/Token');
 
 export class ClearTokenJob

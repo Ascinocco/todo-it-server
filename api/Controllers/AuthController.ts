@@ -1,7 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import * as mongoose from "mongoose";
 let User = require('../Models/User');
-let Token = require('../Models/Token');
 import { AppConfig } from '../../config/App';
 import { NextFunction, Request, Response} from "express";
 
@@ -22,47 +21,66 @@ export class AuthController
 
     public login(req: Request, res: Response, next: NextFunction): any
     {
-        let tempUser = {
-            email: req.body.email,
-            password: req.body.password
-        }
+        let credentials = { email: req.body.email, password: req.body.password };
 
-        User.findOne({ email: tempUser.email }, function(err, user) {
+        User.findByEmail(credentials.email, function (err, user) {
             if (err) {
-                return res.status(200).json({ success: false, msg: "The server farted on your request" });
+                console.error(err);
+                return res.json({
+                    success: false,
+                    msg: "An error occured while trying to log you in. Please try again."
+                });
             }
 
-            if (!user) {
-                return res.status(200).json({ msg: "Could not find your account" });
-            } else if (user) {
-                user.comparePassword(tempUser.password, function(err, isMatch) {
-                    if (!isMatch) {
-                        return res.status(200).json({ success: false, msg: "incorrect password" });
-                    } else if (isMatch) {
+            if (user) {
+
+                user.comparePassword(credentials.password, function (err, isMatch) {
+                    if (err) {
+                        console.error(err);
+                        return res.json({
+                            success: false,
+                            msg: "An error occured while verifying your account info"
+                        })
+                    }
+
+                    if (isMatch) {
 
                         let token = jwt.sign(user.toJSON(), AppConfig.secret, {
-                            expiresIn: '8h'
-                        });
+                            expiresIn: '30d'
+                        })
 
-                        // store new token in the db
-                        let dbToken = new Token();
-                        dbToken.value = token;
-
-                        dbToken.save(function(err, token){
+                        user.addToken(token);
+                        user.save(function(err, user) {
                             if (err) {
-                                return res.status(200).json({ success: false, msg: "Could not save token" });
+                                console.error(err);
+                                return res.json({
+                                    success: false,
+                                    msg: "An error occured while logging you in. Please try again."
+                                });
                             }
 
-                            // set token header
-                            res.set('x-access-token', token.value);
-
-                            return res.status(200).json({
+                            res.set('x-access-token', token);
+                            res.set('user', user.toJSON());
+                            return res.json({
                                 success: true,
                                 msg: "Welcome " + user.firstName,
                                 user: user.toJSON()
                             });
                         });
+
+                    } else {
+                        return res.json({
+                            success: false,
+                            msg: "The password you provided does not match the password we have on file for you."
+                        })
                     }
+
+                });
+
+            } else {
+                return res.json({
+                    success: false,
+                    msg: "We could not find your account"
                 });
             }
         });
@@ -70,88 +88,95 @@ export class AuthController
 
     public logout(req: Request, res: Response, next: NextFunction): any
     {
-        // probably a better way to do this, however, for now I'm just going
-        // to grab the token here as well and revoke it
-        let token = req.body.token || req.query.token || req.headers['x-access-token'];
+        let token = req["currentToken"];
+        let user = req["currentUser"];
 
-        if (token) {
-            Token.findByToken(token, function(err, token) {
+        if (token && user) {
+            user.revokeToken();
+            user.save(function(err) {
                 if (err) {
-                    console.error('Error verifying token');
-                    return res.status(200).json({ success: false, msg: "Error verifying token" });
+                    console.error(err);
+                    return res.json({
+                        success: false,
+                        msg: "An error occured while loggin you out. Please try again"
+                    })
                 }
 
-                try {
-                    token.revoke();
-                    token.save();
-                } catch (err) {
-                    console.error('error revoking and saving token')
-                    return res.status(200).json({ success: false, msg: "Purposefully generic error, check AuthController" });
-                }
-                
-                // on the client if true, redirect to home
-                console.log('Supposedly user is logged out.')
-                return res.status(200).json({ success: true, msg: "You have been logged out" });
-            });
+                return res.json({
+                    success: true,
+                    msg: "You have been logged out. Goodbye!"
+                })                
+            })
         } else {
-            console.log('No token found')
-            return res.status(200).json({ success: false, msg: "Could not retrieve token"});
+            return res.json({
+                success: false,
+                msg: "We could not verify your account"
+            })
         }
     }
 
     public register(req: Request, res: Response, next: NextFunction): any
     {
+        let registerForm = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword,
+        };
         const DUPLICATE_RECORD_ERROR: number = 11000;
-
-        if (req.body.user.password !== req.body.confirmPassword) {
-            return res.status(200).json({ 
+        
+        if (registerForm.password !== registerForm.confirmPassword) {
+            return res.json({
                 success: false,
-                msg: "Passwords do not match",
-                password: req.body.user.password,
-                confirmPassword: req.body.password
-             })
+                msg: "The passwords you entered do not match"
+            })
         }
 
         let user = new User({
-            firstName: req.body.user.firstName,
-            lastName: req.body.user.lastName,
-            email: req.body.user.email,
-            password: req.body.user.password,
-            admin: false
+            firstName: registerForm.firstName,
+            lastName: registerForm.lastName,
+            email: registerForm.email,
+            password: registerForm.password,
         });
 
         user.save(function(err, user) {
             if (err) {
+                console.error(err);
                 if (err.code === DUPLICATE_RECORD_ERROR) {
-                    return res.status(200).json({ success: false, msg: "The email you entered is already in use." });
-                } else if (err.name === "ValidationError") {
-                    return res.status(200).json({ success: false, msg: "Missing email or Password" });
+                    return res.json({
+                        success: false,
+                        msg: "The email you entered is already in use"
+                    })
+                } else {
+                    return res.json({
+                        success: false,
+                        msg: "An error occured creating your account",
+                    })
                 }
-                
-                return res.status(200).json({ success: false, msg: "The server caught on fire...", err:err});
             }
-        
+
             let token = jwt.sign(user.toJSON(), AppConfig.secret, {
-                            expiresIn: '8h'
-                        });
+                expiresIn: '30d'
+            });
 
-            // store new token in the db
-            let dbToken = new Token();
-            dbToken.value = token;
-
-            dbToken.save(function(err, token){
+            user.addToken(token);
+            // double save is not ideal but I need the user to be saved before I sign a token with him/her
+            user.save(function(err, user) {
                 if (err) {
-                    return res.status(500).json({ success: false, msg: "Could not save token" });
+                    return res.json({
+                        success: false,
+                        msg: "Error authenticating your new account. Please try again"
+                    })
                 }
 
-                // set token header
-                res.set('x-access-token', token.value);
-
-                return res.status(200).json({
-                        success: true,
-                        msg: "Your account has been created. Start Todoing!",
-                        user: user.toJSON()
-                     });
+                res.set('x-access-token', token);
+                res.set('user', user.toJSON());
+                return res.json({
+                    success: true,
+                    msg: "You\'re account has been created. Start todoing!",
+                    user: user.toJSON()
+                })
             });
         });
     }

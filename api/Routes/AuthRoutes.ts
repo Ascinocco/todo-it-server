@@ -1,9 +1,5 @@
-/**
- * Routing doesn't really port nicely over to ts 
- * so I'm going to leave it the standard express way
- */
-
 import { AuthController } from '../Controllers/AuthController';
+import { AuthMiddleware } from '../Middleware/AuthMiddleware';
 const authController = new AuthController();
 
 var express = require('express');
@@ -11,7 +7,7 @@ var router = express.Router();
 
 /** Auth routes **/
 router.post('/login', authController.login);
-router.post('/logout', authController.logout);
+router.post('/logout', AuthMiddleware.checkToken, authController.logout);
 router.post('/register', authController.register);
 
 module.exports = router;

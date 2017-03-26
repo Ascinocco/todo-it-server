@@ -15,7 +15,7 @@ var UserController = (function () {
             return res.status(200).json({ msg: "here you are!", user: user });
         });
     };
-    UserController.prototype.update = function (req, res, next) {
+    UserController.prototype.updateAccount = function (req, res, next) {
         var tempUser = req.body.user;
         var confirmPassword = req.body.confirmPassword;
         var newPassword = req.body.newPassword;
@@ -107,6 +107,8 @@ var UserController = (function () {
                 });
             });
         }
+    };
+    UserController.prototype.updateSettings = function (req, res, next) {
     };
     UserController.prototype.deleteAccount = function (req, res, next) {
         var userId = req.params._id;

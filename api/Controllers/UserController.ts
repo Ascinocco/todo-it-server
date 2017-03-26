@@ -22,7 +22,7 @@ export class UserController
         });
     }
 
-    public update(req: Request, res: Response, next: NextFunction): any
+    public updateAccount(req: Request, res: Response, next: NextFunction): any
     {
         let tempUser = req.body.user;
         let confirmPassword = req.body.confirmPassword;
@@ -122,6 +122,11 @@ export class UserController
                     });
              });
         }
+    }
+
+    public updateSettings(req: Request, res: Response, next: NextFunction): any
+    {
+        // update the users app settings
     }
 
     public deleteAccount(req: Request, res: Response, next: NextFunction): any

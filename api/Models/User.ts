@@ -13,7 +13,22 @@ let userSchema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
 
-    admin: { type: Boolean, default: false },
+    token: {
+        value: { type: String, required: true, default: "null" },
+        valid: { type: Boolean, required: true, default: true }
+    },
+    settings: {
+        notifications: {
+            email: { type: Boolean, required: true, default: false },
+            native: { type: Boolean, required: true, default: false }
+        }
+    },
+
+    todoLists: [
+
+    ],
+
+    admin: { type: Boolean, required: true, default: false },
 
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
@@ -68,12 +83,49 @@ userSchema.methods.comparePassword = function(candidatePassword, callback) {
     });
 }
 
+userSchema.methods.addToken = function(value) {
+    let user = this;
+    user.token.value = value;
+    user.token.valid = true;
+}
+
+userSchema.methods.revokeToken = function() {
+    let user = this;
+    user.token.value = "null";
+    user.token.valid = false;
+}
+
 // removes password field
 userSchema.methods.toJSON = function() {
     let user  = this.toObject();
+    delete user.updated_at;
+    delete user.created_at;
     delete user.password;
     delete user.admin;
+    delete user.token;
+    delete user._id;
     return user;
+}
+
+userSchema.methods.isTokenValid = function(token) {
+    let user = this;
+    if (user.token.value === token && user.token.valid) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+userSchema.statics.findByTokenAndUserId = function(token, userId, callback) {
+    return this.findOne({ _id: userId, 'token.value': token }, callback);
+}
+
+userSchema.statics.findByToken = function(token, callback) {
+    return this.findOne({ 'token.value': token }, callback);
+}
+
+userSchema.statics.findByEmail = function(email, callback) {
+    return this.findOne({ email: email }, callback);
 }
 
 // define schema name
