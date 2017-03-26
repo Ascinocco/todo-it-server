@@ -6,7 +6,7 @@ let bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR: number = 10;
 
 // user schema
-var userSchema = new Schema({
+let userSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
 

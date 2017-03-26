@@ -10,7 +10,7 @@
 import * as mongoose from "mongoose";
 let Schema = mongoose.Schema;
 
-var tokenSchema = new Schema({
+let tokenSchema = new Schema({
     value: { type: String, required: true, unique: true },
     valid: { type: Boolean, required: true, default: true }
 }, {
