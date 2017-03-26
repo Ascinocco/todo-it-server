@@ -128,8 +128,8 @@ export class Server
      * jobs will also be written in here until I get it to work right
      */
     public registerJobs(): void
-    {        
-        // ClearTokenJob.register(this.db);
+    {   
+        ClearTokenJob.register(this.db);
     }
 
     public bootstrapComplete(): void

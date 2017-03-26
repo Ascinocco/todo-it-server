@@ -87,9 +87,7 @@ userSchema.methods.isTokenValid = function (token) {
     if (user.token.value === token && user.token.valid) {
         return true;
     }
-    else {
-        return false;
-    }
+    return false;
 };
 userSchema.statics.findByTokenAndUserId = function (token, userId, callback) {
     return this.findOne({ _id: userId, 'token.value': token }, callback);

@@ -111,9 +111,8 @@ userSchema.methods.isTokenValid = function(token) {
     let user = this;
     if (user.token.value === token && user.token.valid) {
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 userSchema.statics.findByTokenAndUserId = function(token, userId, callback) {

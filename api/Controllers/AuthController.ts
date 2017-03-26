@@ -10,8 +10,6 @@ import { NextFunction, Request, Response} from "express";
 /**
  * Handles all authentication related requested
  * 
- * TODO: what return type should these methods have??? 
- * 
  * @export
  * @class AuthController
  */

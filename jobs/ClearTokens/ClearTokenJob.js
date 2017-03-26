@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var schedule = require("node-schedule");
-var Token = require('../../api/Models/Token');
+var User = require('../../api/Models/User');
 var ClearTokenJob = (function () {
     function ClearTokenJob() {
     }
@@ -12,11 +12,13 @@ var ClearTokenJob = (function () {
         rule.minute = 30;
         var job = schedule.scheduleJob(rule, function () {
             console.log('Clearing the old tokens...');
-            Token.remove({ valid: false }, function (err, removedTokens) {
+            User.update({ 'token.valid': false }, { 'token.value': "null" }, { multi: true }, function (err, raw) {
                 if (err) {
-                    console.error('JOB FAILED. CHECK THE DB.');
+                    console.error("CRON EERRRRROOOOOOORRRRRR");
+                    console.error(err);
                 }
-                console.log('Tokens removed successfully!');
+                console.log("JOB SUCCESSSSSSSS");
+                console.log(raw);
             });
         });
     };

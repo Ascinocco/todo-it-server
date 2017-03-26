@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 import * as schedule from "node-schedule";
-let Token = require('../../api/Models/Token');
+let User = require('../../api/Models/User');
 
 export class ClearTokenJob
 {
@@ -17,13 +17,17 @@ export class ClearTokenJob
         let job = schedule.scheduleJob(rule, function() {
             console.log('Clearing the old tokens...');
 
-            Token.remove({ valid: false }, function(err, removedTokens){
+            User.update(
+            { 'token.valid': false },
+            { 'token.value': "null" },
+            { multi: true }, function(err, raw) {
                 if (err) {
-                    // probably need a better alert system than this
-                    console.error('JOB FAILED. CHECK THE DB.');
+                    //TODO: hook into slack and send err back to me
+                    console.error("CRON EERRRRROOOOOOORRRRRR")
+                    console.error(err)
                 }
-
-                console.log('Tokens removed successfully!');
+                console.log("JOB SUCCESSSSSSSS")
+                console.log(raw);
             });
         });
     }
