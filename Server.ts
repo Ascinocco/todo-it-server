@@ -18,9 +18,9 @@ let UserRoutes = require("./api/Routes/UserRoutes");
 
 export class Server
 {
-    public app: express.Application;
+    public db: any;
     private env: string;
-    public db: any; // for the time being db will be type any so I don't shoot myself
+    public app: express.Application;
 
     /**
      * Bootstraps server
@@ -107,8 +107,8 @@ export class Server
      */
     public registerRoutes(): void
     {
-        this.app.use('/auth', AuthRoutes);
-        this.app.use('/user', UserRoutes);
+        this.app.use('/api/auth', AuthRoutes);
+        this.app.use('/api/user', UserRoutes);
     }
 
     /**
