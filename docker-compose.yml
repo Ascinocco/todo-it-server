@@ -17,5 +17,7 @@ services:
   mongo:
     image: "mongo:latest"
     container_name: "mongo"
+    volumes:
+      - "$PWD/data/db:/data/db"
     ports:
       - "27017:27017"
