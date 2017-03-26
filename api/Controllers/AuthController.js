@@ -27,7 +27,7 @@ var AuthController = (function () {
                     }
                     if (isMatch) {
                         var token_1 = jwt.sign(user.toJSON(), App_1.AppConfig.secret, {
-                            expiresIn: '30d'
+                            expiresIn: '1m'
                         });
                         user.addToken(token_1);
                         user.save(function (err, user) {

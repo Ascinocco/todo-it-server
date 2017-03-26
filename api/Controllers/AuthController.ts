@@ -44,7 +44,7 @@ export class AuthController
                     if (isMatch) {
 
                         let token = jwt.sign(user.toJSON(), AppConfig.secret, {
-                            expiresIn: '30d'
+                            expiresIn: '1m'
                         })
 
                         user.addToken(token);

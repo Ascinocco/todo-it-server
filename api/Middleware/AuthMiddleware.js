@@ -12,39 +12,55 @@ var AuthMiddleware = (function () {
             jwt.verify(token, App_1.AppConfig.secret, function (err, decoded) {
                 if (err) {
                     console.error(err);
-                    User.findByToken(token, function (err, user) {
-                        user.revokeToken();
-                        user.save(function (err) {
-                            return res.json({
-                                success: false,
-                                msg: err.name
+                    if (err.name === "TokenExpiredError") {
+                        User.findByToken(token, function (err, user) {
+                            user.revokeToken();
+                            user.save(function (err) {
+                                return res.json({
+                                    success: false,
+                                    msg: "Your token is expired. Please login again"
+                                });
                             });
                         });
-                    });
-                }
-                User.findByToken(token, function (err, user) {
-                    if (err) {
-                        console.error(err);
+                    }
+                    else if (err.name === "JsonWebTokenError") {
                         return res.json({
                             success: false,
-                            msg: "Could not find token"
+                            msg: "Malformed Token"
                         });
-                    }
-                    if (user.isTokenValid(token)) {
-                        req["currentUser"] = user;
-                        req["currentToken"] = token;
-                        next();
                     }
                     else {
-                        user.revokeToken();
-                        user.save(function (err) {
-                            return res.json({
-                                success: false,
-                                msg: "Token is invalid"
-                            });
+                        return res.json({
+                            success: false,
+                            msg: "An error occured valididation your account."
                         });
                     }
-                });
+                }
+                else {
+                    User.findByToken(token, function (err, user) {
+                        if (err) {
+                            console.error(err);
+                            return res.json({
+                                success: false,
+                                msg: "Could not find token"
+                            });
+                        }
+                        if (user.isTokenValid(token)) {
+                            req["currentUser"] = user;
+                            req["currentToken"] = token;
+                            next();
+                        }
+                        else {
+                            user.revokeToken();
+                            user.save(function (err) {
+                                return res.json({
+                                    success: false,
+                                    msg: "Token is invalid"
+                                });
+                            });
+                        }
+                    });
+                }
             });
         }
         else {
