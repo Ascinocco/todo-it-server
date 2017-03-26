@@ -8,6 +8,7 @@ var cookieParser = require("cookie-parser");
 var CookieParser_1 = require("./config/CookieParser");
 var ClearTokenJob_1 = require("./jobs/ClearTokens/ClearTokenJob");
 var CORSMiddleware_1 = require("./api/Middleware/CORSMiddleware");
+var ErrorHandlerMiddleware_1 = require("./api/Middleware/ErrorHandlerMiddleware");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
 var Server = (function () {
@@ -42,12 +43,7 @@ var Server = (function () {
         this.app.use('/api/user', UserRoutes);
     };
     Server.prototype.registerMiddlware = function () {
-        this.app.use(function (err, req, res, next) {
-            res.status(err.status || 500);
-            res.json({ msg: "Error", status: err.status || 500 });
-            console.log(err);
-            next(err);
-        });
+        this.app.use(ErrorHandlerMiddleware_1.ErrorHandlerMiddleware.handle);
     };
     Server.prototype.registerJobs = function () {
         ClearTokenJob_1.ClearTokenJob.register(this.db);

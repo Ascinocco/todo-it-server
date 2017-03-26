@@ -12,6 +12,7 @@ import * as cookieParser from "cookie-parser";
 import { CookieParserConfig } from "./config/CookieParser";
 import { ClearTokenJob } from "./jobs/ClearTokens/ClearTokenJob";
 import { CORSMiddleware } from './api/Middleware/CORSMiddleware';
+import { ErrorHandlerMiddleware } from './api/Middleware/ErrorHandlerMiddleware';
 
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
@@ -118,16 +119,8 @@ export class Server
      */
     public registerMiddlware(): void
     {
-        // until I decided how I want to divide up middleware its all going to
-        // be built in here
-
         // handle errors
-        this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction){
-            res.status(err.status || 500)
-            res.json({msg: "Error", status: err.status || 500})
-            console.log(err);
-            next(err);
-        });
+        this.app.use(ErrorHandlerMiddleware.handle);
     }
 
     /**
