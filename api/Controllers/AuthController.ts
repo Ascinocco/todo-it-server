@@ -1,10 +1,11 @@
-
-import { NextFunction, Request, Response} from "express";
-import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
+import * as mongoose from "mongoose";
 let User = require('../Models/User');
 let Token = require('../Models/Token');
-let config = require('../config/config');
+import { AppConfig } from '../../config/App';
+import { NextFunction, Request, Response} from "express";
+
+
 
 
 /**
@@ -39,7 +40,7 @@ export class AuthController
                         return res.status(200).json({ success: false, msg: "incorrect password" });
                     } else if (isMatch) {
 
-                        let token = jwt.sign(user.toJSON(), config.secret, {
+                        let token = jwt.sign(user.toJSON(), AppConfig.secret, {
                             expiresIn: '8h'
                         });
 
@@ -130,7 +131,7 @@ export class AuthController
                 return res.status(200).json({ success: false, msg: "The server caught on fire...", err:err});
             }
         
-            let token = jwt.sign(user.toJSON(), config.secret, {
+            let token = jwt.sign(user.toJSON(), AppConfig.secret, {
                             expiresIn: '8h'
                         });
 

@@ -5,12 +5,11 @@ var logger = require("morgan");
 var express = require("express");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
-var CookieParserConfig_1 = require("./api/config/CookieParserConfig");
+var CookieParser_1 = require("./config/CookieParser");
 var ClearTokenJob_1 = require("./jobs/ClearTokens/ClearTokenJob");
 var CORSMiddleware_1 = require("./api/Middleware/CORSMiddleware");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
-var config = require("./api/config/config");
 var Server = (function () {
     function Server(db, env) {
         this.env = env;
@@ -31,7 +30,7 @@ var Server = (function () {
         this.app.use(bodyParser.urlencoded({
             extended: true
         }));
-        this.app.use(cookieParser(CookieParserConfig_1.CookieParserConfig[this.env]));
+        this.app.use(cookieParser(CookieParser_1.CookieParserConfig[this.env]));
         this.app.use(cors());
         this.app.use(CORSMiddleware_1.CORSMiddleware.allowCORS);
     };

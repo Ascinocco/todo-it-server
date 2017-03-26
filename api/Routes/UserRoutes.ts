@@ -2,7 +2,6 @@ import { UserController } from '../Controllers/UserController';
 import { AuthMiddleware } from '../Middleware/AuthMiddleware';
 import * as jwt from "jsonwebtoken";
 
-let config = require('../config/config');
 const userController = new UserController();
 
 var express = require('express');

@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
 let Token = require('../Models/Token');
-let config = require('../config/config');
+import { AppConfig } from '../../config/App';
+import { NextFunction, Request, Response} from "express";
 
 export class AuthMiddleware
 {
@@ -25,7 +25,7 @@ export class AuthMiddleware
         let token = req.body.token || req.query.token || req.headers['x-access-token'];
 
         if (token) {
-            jwt.verify(token, config.secret, function(err, decoded) {
+            jwt.verify(token, AppConfig.secret, function(err, decoded) {
                 if (err) {
                     if (err.name === "TokenExpiredError") {
                         Token.findByToken(token, function(err, token) {

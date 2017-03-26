@@ -9,17 +9,12 @@ import * as bodyParser from "body-parser";
 import * as schedule from "node-schedule";
 import * as cookieParser from "cookie-parser";
 
-import { CookieParserConfig } from "./api/config/CookieParserConfig";
+import { CookieParserConfig } from "./config/CookieParser";
 import { ClearTokenJob } from "./jobs/ClearTokens/ClearTokenJob";
-
 import { CORSMiddleware } from './api/Middleware/CORSMiddleware';
 
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
-let config = require("./api/config/config");
-
-// import { AuthMiddleware } from "./api/Middleware/AuthMiddleware";
-
 
 export class Server
 {

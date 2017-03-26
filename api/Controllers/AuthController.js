@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = require("jsonwebtoken");
 var User = require('../Models/User');
 var Token = require('../Models/Token');
-var config = require('../config/config');
+var App_1 = require("../../config/App");
 var AuthController = (function () {
     function AuthController() {
     }
@@ -25,7 +25,7 @@ var AuthController = (function () {
                         return res.status(200).json({ success: false, msg: "incorrect password" });
                     }
                     else if (isMatch) {
-                        var token = jwt.sign(user.toJSON(), config.secret, {
+                        var token = jwt.sign(user.toJSON(), App_1.AppConfig.secret, {
                             expiresIn: '8h'
                         });
                         var dbToken = new Token();
@@ -98,7 +98,7 @@ var AuthController = (function () {
                 }
                 return res.status(200).json({ success: false, msg: "The server caught on fire...", err: err });
             }
-            var token = jwt.sign(user.toJSON(), config.secret, {
+            var token = jwt.sign(user.toJSON(), App_1.AppConfig.secret, {
                 expiresIn: '8h'
             });
             var dbToken = new Token();
