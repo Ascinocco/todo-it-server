@@ -20,6 +20,7 @@ export class UserController
                 })
             }
 
+            res.set('x-access-token', token);
             res.set('user', user.toJSON());
 
             return res.json({
@@ -87,7 +88,7 @@ export class UserController
         }
 
         if (user.firstName || user.lastName || user.email || shouldUpdatePassword) {
-            user.save(function(err) {
+            user.save(function(err, user) {
                 if (err) {
                     console.log(err);
                     return res.json({
@@ -95,6 +96,9 @@ export class UserController
                         msg: "An error occured while updating your account. Please try again."
                     })
                 }
+
+                res.set('x-access-token', token);
+                res.set('user', user.toJSON());
 
                 return res.json({
                     success: true,

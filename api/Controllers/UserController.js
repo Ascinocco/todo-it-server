@@ -14,6 +14,7 @@ var UserController = (function () {
                     msg: "We could not get your user data"
                 });
             }
+            res.set('x-access-token', token);
             res.set('user', user.toJSON());
             return res.json({
                 success: true,
@@ -75,7 +76,7 @@ var UserController = (function () {
             }
         }
         if (user.firstName || user.lastName || user.email || shouldUpdatePassword) {
-            user.save(function (err) {
+            user.save(function (err, user) {
                 if (err) {
                     console.log(err);
                     return res.json({
@@ -83,6 +84,8 @@ var UserController = (function () {
                         msg: "An error occured while updating your account. Please try again."
                     });
                 }
+                res.set('x-access-token', token);
+                res.set('user', user.toJSON());
                 return res.json({
                     success: true,
                     msg: "Your account has been updated!",
