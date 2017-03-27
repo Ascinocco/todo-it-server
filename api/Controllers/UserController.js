@@ -95,6 +95,30 @@ var UserController = (function () {
         }
     };
     UserController.prototype.updateSettings = function (req, res, next) {
+        var token = req["currentToken"];
+        var user = req["currentUser"];
+        var settingsForm = {
+            emailNotifications: req.body.emailNotifications,
+            nativeNotifications: req.body.nativeNotifications,
+        };
+        user.settings.notifications.email = settingsForm.emailNotifications;
+        user.settings.notifications.native = settingsForm.nativeNotifications;
+        user.save(function (err, user) {
+            if (err) {
+                console.log(err);
+                return res.json({
+                    success: false,
+                    msg: "An error occured saving your account settings"
+                });
+            }
+            res.set('x-access-token', token);
+            res.set('user', user.toJSON());
+            return res.json({
+                success: true,
+                msg: "Settings updated!",
+                user: user.toJSON()
+            });
+        });
     };
     UserController.prototype.deleteAccount = function (req, res, next) {
         var userId = req.params._id;

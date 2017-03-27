@@ -111,7 +111,34 @@ export class UserController
 
     public updateSettings(req: Request, res: Response, next: NextFunction): any
     {
-        // update the users app settings
+        let token = req["currentToken"];
+        let user = req["currentUser"];
+        let settingsForm = {
+            emailNotifications: req.body.emailNotifications,
+            nativeNotifications: req.body.nativeNotifications,
+        };
+
+        user.settings.notifications.email = settingsForm.emailNotifications;
+        user.settings.notifications.native = settingsForm.nativeNotifications;
+
+        user.save(function(err, user) {
+            if (err) {
+                console.log(err);
+                return res.json({
+                    success: false,
+                    msg: "An error occured saving your account settings"
+                });
+            }
+
+            res.set('x-access-token', token);
+            res.set('user', user.toJSON());
+
+            return res.json({
+                success: true,
+                msg: "Settings updated!",
+                user: user.toJSON()
+            })
+        })
     }
 
     public deleteAccount(req: Request, res: Response, next: NextFunction): any
