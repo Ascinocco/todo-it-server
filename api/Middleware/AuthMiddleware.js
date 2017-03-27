@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = require("jsonwebtoken");
-var User = require('../Models/User');
+var User = require('../Models/User/User');
 var App_1 = require("../../config/App");
 var AuthMiddleware = (function () {
     function AuthMiddleware() {

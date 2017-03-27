@@ -1,5 +1,5 @@
 import * as async from "async";
-let User = require('../Models/User');
+let User = require('../Models/User/User');
 import * as mongoose from "mongoose";
 import { NextFunction, Request, Response } from "express";
 

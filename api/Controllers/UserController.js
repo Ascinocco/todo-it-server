@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var User = require('../Models/User');
+var User = require('../Models/User/User');
 var UserController = (function () {
     function UserController() {
     }

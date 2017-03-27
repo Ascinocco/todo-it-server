@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var schedule = require("node-schedule");
-var User = require('../../api/Models/User');
+var User = require('../../api/Models/User/User');
 var ClearTokenJob = (function () {
     function ClearTokenJob() {
     }

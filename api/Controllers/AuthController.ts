@@ -1,6 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import * as mongoose from "mongoose";
-let User = require('../Models/User');
+let User = require('../Models/User/User');
 import { AppConfig } from '../../config/App';
 import { NextFunction, Request, Response} from "express";
 

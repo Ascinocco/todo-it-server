@@ -17,7 +17,7 @@ import { ErrorHandlerMiddleware } from './api/Middleware/ErrorHandlerMiddleware'
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
 
-import { Todo } from './api/Models/Todo';
+import { Todo } from './api/Models/Todo/Todo';
 
 export class Server
 {

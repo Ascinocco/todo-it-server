@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 import * as schedule from "node-schedule";
-let User = require('../../api/Models/User');
+let User = require('../../api/Models/User/User');
 
 export class ClearTokenJob
 {

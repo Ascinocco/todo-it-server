@@ -1,5 +1,5 @@
 import * as jwt from "jsonwebtoken";
-let User = require('../Models/User');
+let User = require('../Models/User/User');
 import { AppConfig } from '../../config/App';
 import { NextFunction, Request, Response} from "express";
 

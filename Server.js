@@ -11,7 +11,7 @@ var CORSMiddleware_1 = require("./api/Middleware/CORSMiddleware");
 var ErrorHandlerMiddleware_1 = require("./api/Middleware/ErrorHandlerMiddleware");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
-var Todo_1 = require("./api/Models/Todo");
+var Todo_1 = require("./api/Models/Todo/Todo");
 var Server = (function () {
     function Server(db, env) {
         this.env = env;
