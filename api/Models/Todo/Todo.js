@@ -1,9 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var moment = require("moment");
+var ValidAlerts_1 = require("./Constants/ValidAlerts");
 var ValidIntervals_1 = require("./Constants/ValidIntervals");
 var Todo = (function () {
     function Todo(todo) {
+        this.alerts = [];
+        this.labels = [];
     }
     Todo.prototype.setDueYear = function (year) {
         var currentYear = moment.utc().year();
@@ -158,7 +161,24 @@ var Todo = (function () {
         return this.interval;
     };
     Todo.prototype.addAlert = function (alert) {
-        this.alerts.push(alert);
+        for (var unitKey in ValidAlerts_1.ValidAlerts) {
+            if (alert.unit === ValidAlerts_1.ValidAlerts[unitKey].unit) {
+                for (var alertValue in ValidAlerts_1.ValidAlerts[unitKey]) {
+                    if (alert.value === ValidAlerts_1.ValidAlerts[unitKey][alertValue]) {
+                        this.alerts.push(alert);
+                    }
+                }
+            }
+        }
+    };
+    Todo.prototype.removeAlert = function (alert) {
+        for (var i = 0; i < this.alerts.length; i++) {
+            if (alert.value === this.alerts[i].value && alert.unit === this.alerts[i].unit) {
+                this.alerts.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
     };
     Todo.prototype.getAlerts = function () {
         return this.alerts;

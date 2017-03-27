@@ -31,7 +31,8 @@ export class Todo
 
     constructor(todo: Object)
     {
-
+        this.alerts = [];
+        this.labels = [];
     }
 
 
@@ -218,7 +219,27 @@ export class Todo
 
     public addAlert(alert: { value: number, unit: string }): void
     {
-        this.alerts.push(alert);
+        for (var unitKey in ValidAlerts) {
+            if (alert.unit === ValidAlerts[unitKey].unit) {
+                for (var alertValue in ValidAlerts[unitKey]) {
+                    if (alert.value === ValidAlerts[unitKey][alertValue]) {
+                        this.alerts.push(alert);
+                    }
+                }
+            }
+        }
+    }
+
+    public removeAlert(alert: { value: number, unit: string }): Boolean
+    {
+        for (var i = 0; i < this.alerts.length; i++) {
+            if (alert.value === this.alerts[i].value && alert.unit === this.alerts[i].unit) {
+                this.alerts.splice(i, 1);
+                return true
+            }
+        }
+
+        return false;
     }
 
     public getAlerts(): Array<{ value: number, unit: string }>

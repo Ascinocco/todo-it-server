@@ -11,6 +11,7 @@ var CORSMiddleware_1 = require("./api/Middleware/CORSMiddleware");
 var ErrorHandlerMiddleware_1 = require("./api/Middleware/ErrorHandlerMiddleware");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
+var Todo_1 = require("./api/Models/Todo/Todo");
 var Server = (function () {
     function Server(db, env) {
         this.env = env;
@@ -21,6 +22,16 @@ var Server = (function () {
         this.registerMiddlware();
         this.registerJobs();
         this.bootstrapComplete();
+        var todo = new Todo_1.Todo({});
+        todo.addAlert({ value: 1, unit: 'day' });
+        todo.addAlert({ value: 3, unit: 'hour' });
+        todo.addAlert({ value: 1, unit: 'month' });
+        console.log('adding alerts...');
+        console.log(todo.getAlerts());
+        console.log('removing some alerts...');
+        todo.removeAlert({ value: 3, unit: 'hour' });
+        todo.removeAlert({ value: 1, unit: 'month' });
+        console.log(todo.getAlerts());
     }
     Server.boostrap = function (db, env) {
         return new Server(db, env);

@@ -17,6 +17,8 @@ import { ErrorHandlerMiddleware } from './api/Middleware/ErrorHandlerMiddleware'
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
 
+import { Todo } from "./api/Models/Todo/Todo";
+
 export class Server
 {
     public db: any;
@@ -62,6 +64,21 @@ export class Server
 
         // just let devs know boostrap is complete
         this.bootstrapComplete();
+
+        let todo = new Todo({});
+        todo.addAlert({ value: 1, unit: 'day' });
+        todo.addAlert({ value: 3, unit: 'hour' });
+        todo.addAlert({ value: 1, unit: 'month' });
+
+        console.log('adding alerts...');
+        console.log(todo.getAlerts());
+
+        console.log('removing some alerts...')
+        todo.removeAlert({ value: 3, unit: 'hour' });
+        todo.removeAlert({ value: 1, unit: 'month' });
+
+        console.log(todo.getAlerts());
+
     }
 
     /**
