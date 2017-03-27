@@ -17,6 +17,8 @@ import { ErrorHandlerMiddleware } from './api/Middleware/ErrorHandlerMiddleware'
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
 
+import { Todo } from "./api/Models/Todo/Todo";
+
 export class Server
 {
     public db: any;
@@ -62,6 +64,10 @@ export class Server
 
         // just let devs know boostrap is complete
         this.bootstrapComplete();
+
+        let todo = new Todo({});
+        todo.setInterval({ value: 238, unit: 'clicke' });
+        console.log(todo.getInterval());
     }
 
     /**

@@ -1,7 +1,7 @@
 export const ValidIntervals: any = {
 
             DAY: {
-                measure: 'day',
+                unit: 'day',
                 ONE:    1,
                 TWO:    2,
                 THREE:  3,
@@ -9,20 +9,25 @@ export const ValidIntervals: any = {
             },
 
             WEEK: {
-                measure: 'week',
+                unit: 'week',
                 ONE:    1,
                 TWO:    2,
             },
 
             MONTH: {
-                measure: 'month',
+                unit: 'month',
                 ONE:    1,
                 TWO:    2,
                 SIX:    6,
             },
 
             YEAR: {
-                measure: 'year',
-                ONE: 1,
+                unit: 'year',
+                ONE:    1,
+            },
+
+            NONE: {
+                unit: 'none',
+                ZERO:   0,
             }
 };

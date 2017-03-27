@@ -133,11 +133,28 @@ var Todo = (function () {
     Todo.prototype.getDueDate = function () {
         return this.dueDate;
     };
-    Todo.prototype.setReminderInterval = function (interval) {
-        if (measure in ValidIntervals_1.ValidIntervals.DAY)
+    Todo.prototype.setInterval = function (interval) {
+        var validInterval = false;
+        for (var unitKey in ValidIntervals_1.ValidIntervals) {
+            if (interval.unit === ValidIntervals_1.ValidIntervals[unitKey].unit) {
+                for (var intervalKey in ValidIntervals_1.ValidIntervals[unitKey]) {
+                    if (interval.value === ValidIntervals_1.ValidIntervals[unitKey][intervalKey]) {
+                        validInterval = true;
+                    }
+                }
+            }
+        }
+        if (validInterval) {
             this.interval = interval;
+        }
+        else {
+            this.interval = {
+                value: ValidIntervals_1.ValidIntervals.NONE.ZERO,
+                unit: ValidIntervals_1.ValidIntervals.NONE.unit
+            };
+        }
     };
-    Todo.prototype.getReminderInterval = function () {
+    Todo.prototype.getInterval = function () {
         return this.interval;
     };
     Todo.prototype.addAlert = function (alert) {
