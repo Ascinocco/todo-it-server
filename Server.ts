@@ -17,8 +17,6 @@ import { ErrorHandlerMiddleware } from './api/Middleware/ErrorHandlerMiddleware'
 let AuthRoutes = require("./api/Routes/AuthRoutes");
 let UserRoutes = require("./api/Routes/UserRoutes");
 
-import { Todo } from './api/Models/Todo/Todo';
-
 export class Server
 {
     public db: any;
@@ -64,15 +62,6 @@ export class Server
 
         // just let devs know boostrap is complete
         this.bootstrapComplete();
-
-        let todo = new Todo({});
-        todo.setDueYear(0)
-        todo.setDueMonth(22);
-        todo.setDueDay(220);
-        todo.setDueHour(220);
-        todo.setDueMinute(220);
-        todo.setDueDate();
-        console.log(todo.getDueDate());
     }
 
     /**

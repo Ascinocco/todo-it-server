@@ -202,31 +202,7 @@ export class Todo
 
     public setAlerts(): void
     {
-        // alert validation
-
-        // 0 min
-        // 10 min
-        // 15 min
-        // 30 min
-        // 45 min
-
-        // 1 hour
-        // 2 hours
-        // 3 hours
-        // 4 hours
-        // 5 hours
-        // 6 hours
-
-        // 1 day
-        // 2 days
-        // 3 days
-        // 4 days
-        // 5 days
-        // 6 days
         
-        // 1 week
-        // 2 weeks
-        // 1 month
     }
 
     public getAlerts(): Array<string>
