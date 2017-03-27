@@ -11,7 +11,6 @@ var CORSMiddleware_1 = require("./api/Middleware/CORSMiddleware");
 var ErrorHandlerMiddleware_1 = require("./api/Middleware/ErrorHandlerMiddleware");
 var AuthRoutes = require("./api/Routes/AuthRoutes");
 var UserRoutes = require("./api/Routes/UserRoutes");
-var Todo_1 = require("./api/Models/Todo/Todo");
 var Server = (function () {
     function Server(db, env) {
         this.env = env;
@@ -22,9 +21,6 @@ var Server = (function () {
         this.registerMiddlware();
         this.registerJobs();
         this.bootstrapComplete();
-        var todo = new Todo_1.Todo({});
-        todo.setInterval({ value: 238, unit: 'clicke' });
-        console.log(todo.getInterval());
     }
     Server.boostrap = function (db, env) {
         return new Server(db, env);
