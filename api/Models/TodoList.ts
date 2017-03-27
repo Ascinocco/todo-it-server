@@ -1,22 +1,24 @@
+import { Todo } from './Todo';
+
 export class TodoList
 {
-    public list: Array<any>;
+    public list: Array<Todo>;
     public name: string;
 
-    constructor(name: string, list: Array<any>)
+    constructor(name: string, list: Array<Todo>)
     {
         this.name = name;
         this.list = list;
     }
 
-    public addTodo(todo): Array<any>
+    public addTodo(todo): Array<Todo>
     {
         // add todo
         this.list.push(todo);
         return this.list;
     }
 
-    public deleteTodo(todo): Array<any>
+    public deleteTodo(todo): Array<Todo>
     {
         // delete todo
         // probably going to need to splice

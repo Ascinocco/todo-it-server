@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 /**
  * This is purely for modelling and have some sort of validation
  * This class will be used to ensure that the data stored to a users todoList is valid
@@ -9,25 +11,28 @@
  */
 export class Todo
 {
-    private name: string;
-    private desc: string;
+    private static validAlerts: Object = {};
+    private static validIntervals: Object = {};
 
-    private todoList: string;
-    private labels: Array<string>;
+    private name:       string;
+    private desc:       string;
 
-    private dueYear: string;
-    private dueMonth: string;
-    private dueDay: string;
-    private dueHour: string;
-    private dueMinute: string;
+    private todoList:   string;
+    private labels:     Array<string>;
 
-    private dueDate: string;
+    private dueYear:    number;
+    private dueMonth:   number;
+    private dueDay:     number;
+    private dueHour:    number;
+    private dueMinute:  number;
 
-    private alerts: Array<string>;
+    private dueDate:    any;
+
+    private alerts:     Array<string>;
     private reminderInterval: string;
 
-    private createdAt: string;
-    private updatedAt: string;
+    private createdAt:  string;
+    private updatedAt:  string;
 
     constructor(todo: Object)
     {
@@ -38,149 +43,130 @@ export class Todo
 
     public setDueYear(year: any): void
     {
-        let date = new Date();
-        let currentYear = date.getUTCFullYear();
-        if (year) {    
-            try {
-                year = parseInt(year);
-                if (year >= currentYear && year < 3000) {
-                    this.dueYear = year;
-                }
-            } catch (err) {
-                console.log('Error converting year');
-                console.log(err);
-                console.log('setting to current year');
-                this.dueYear = currentYear.toString();
+        let currentYear = moment.utc().year();
+        
+        try {
+            year = parseInt(year);
+            if (year >= currentYear && year < 3000) {
+                this.dueYear = year;
+            } else {
+                console.log('The year provided is not between the current year and the year 3000');
+                console.log('Setting to current year');
+                this.dueYear = currentYear;
             }
-            
-        } else {
-            this.dueYear = currentYear.toString();
+        } catch (err) {
+            console.log('Error converting year');
+            console.log(err);
+            console.log('Setting to current year');
+            this.dueYear = currentYear;
         }
     }
 
-    public getDueYear(): string
+    public getDueYear(): number
     {
         return this.dueYear;
     }
 
-    public setDueMonth(month): void
+    public setDueMonth(month: any): void
     {
-        let date = new Date();
-        let currentMonth = date.getUTCMonth();
+        let currentMonth = moment.utc().month();
 
-        if (month) {
-            try {
-                month = parseInt(month);
-                if (month >= 1 && month <= 12) {
-                    this.dueMonth = month;
-                } else {
-                    console.log('Invalid month value...');
-                    console.log('Setting to current month');
-                    this.dueMonth = currentMonth.toString();
-                }
-            } catch (err) {
-                console.log('Error converting month');
-                console.log(err);
-                console.log('setting to current year');
-                this.dueMonth = currentMonth.toString();
+        try {
+            month = parseInt(month);
+            if (month >= 0 && month <= 11) {
+                this.dueMonth = month;
+            } else {
+                console.log('Invalid month range...');
+                console.log('Setting to current month...');
+                this.dueMonth = currentMonth;
             }
-        } else {
-            this.dueMonth = currentMonth.toString();
+        } catch (err) {
+            console.log('Could not parse month');
+            console.log(err);
+            console.log('Setting to current month');
+            this.dueMonth = currentMonth;
         }
     }
 
-    public getDueMonth(): string
+    public getDueMonth(): number
     {
         return this.dueMonth;
     }
 
-    public setDueDay(day): void
+    public setDueDay(day: any): void
     {
-        let date = new Date();
-        let currentDay = date.getUTCDay();
-
-        if (day) {
-            try {
-                day = parseInt(day);
-                if (day >= 1 && day <= 31) {
-                    this.dueDay = day;
-                } else {
-                    console.log('Invalid due DAY');
-                    console.log('Setting to the current day number');
-                    this.dueDay = currentDay.toString();
-                }
-            } catch (err) {
-                console.log('Error converting DAY');
-                console.log(err);
-                console.log('Settings to todays number');
-                this.dueDay = currentDay.toString();
+        let currentDay = moment.utc().date();
+        
+        try {
+            day = parseInt(day);
+            if (day >= 1 && day <= 31) {
+                this.dueDay = day;
+            } else {
+                console.log('Invalid day number range...');
+                console.log('Setting to current day number...');
+                this.dueDay = currentDay;
             }
-        } else {
-            this.dueDay = currentDay.toString();
+        } catch (err) {
+            console.log('Could not parse day number');
+            console.log(err);
+            console.log('Setting to current day number');
+            this.dueDay = currentDay;
         }
     }
 
-    public getDueDay(): string 
+    public getDueDay(): number 
     {
         return this.dueDay;
     }
 
-    public setDueHour(hour): void
+    public setDueHour(hour: any): void
     {
-        let date = new Date();
-        let currentHour = date.getUTCHours();
+        let currentHour = moment.utc().hour();
 
-        if (hour) {
-            try {
-                hour = parseInt(hour);
-                if (hour >= 0 && hour <= 23) {
-                    this.dueHour = hour;
-                } else {
-                    console.log('Invalid hour set');
-                    console.log('setting to current hour');
-                    this.dueHour = currentHour.toString();
-                }
-            } catch (err) {
-                console.log('Error converting hour');
+        try {
+            hour = parseInt(hour);
+            if (hour >= 0 && hour <= 23) {
+                this.dueHour = hour;
+            } else {
+                console.log('Invalid hour set');
                 console.log('setting to current hour');
-                this.dueHour = currentHour.toString();
+                this.dueHour = currentHour;
             }
-        } else {
-            this.dueHour = currentHour.toString();
-        } 
+        } catch (err) {
+            console.log('Error converting hour');
+            console.log(err);
+            console.log('setting to current hour');
+            this.dueHour = currentHour;
+        }
     }
 
-    public getDueHour(): string
+    public getDueHour(): number
     {
         return this.dueHour;
     }
 
-    public setDueMinute(minute): void
+    public setDueMinute(minute: any): void
     {
-        let date = new Date();
-        let currentMinute = date.getUTCMinutes();
+        let currentMinute = moment.utc().minute();
 
-        if (minute) {
-            try {
-                minute = parseInt(minute);
-                if (minute >= 0 && minute <= 59) {
-                    this.dueMinute = minute;
-                } else {
-                    console.log('Invalid minute set');
-                    console.log('Setting to current minute');
-                    this.dueMinute = currentMinute.toString();
-                }
-            } catch (err) {
-                console.log('Error converting minute');
-                console.log('Setting to curent minute');
-                this.dueMinute = currentMinute.toString();
+        try {
+            minute = parseInt(minute);
+            if (minute >= 0 && minute <= 59) {
+                this.dueMinute = minute;
+            } else {
+                console.log('Invalid minute set');
+                console.log('setting to current minute');
+                this.dueMinute = currentMinute;
             }
-        } else {
-            this.dueMinute = currentMinute.toString();
+        } catch (err) {
+            console.log('Error converting minute');
+            console.log(err);
+            console.log('setting to current minute');
+            this.dueMinute = currentMinute;
         }
     }
 
-    public getDueMinute(): string
+    public getDueMinute(): number
     {
         return this.dueMinute;
     }
@@ -188,16 +174,25 @@ export class Todo
     // creates the actual date to store in the db
     public setDueDate(): void
     {
-        // use prebuilt variables
+        // all the validation is done in the setters of the date fields
+        // year, month, day hours, minutes
+        this.dueDate =  moment.utc()
+                        .year(this.getDueYear())
+                        .month(this.getDueMonth())
+                        .date(this.getDueDay()) // date not day lol, wrong function call will mess up whole date
+                        .hour(this.getDueHour())
+                        .minute(this.getDueMinute())
+                        .second(0) // defaults for second and millisecond
+                        .millisecond(0);
     }
 
     // gets the due date 
-    public getDueDate(): string
+    public getDueDate(): any
     {
         return this.dueDate;
     }
 
-    public setReminderInterval(interval): void
+    public setReminderInterval(interval: string): void
     {
         // intervals validation
         // every day
