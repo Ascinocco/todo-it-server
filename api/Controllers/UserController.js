@@ -121,12 +121,22 @@ var UserController = (function () {
         });
     };
     UserController.prototype.deleteAccount = function (req, res, next) {
-        var userId = req.params._id;
-        User.findOneAndRemove({ _id: userId }, function (err) {
+        var token = req["currentToken"];
+        var user = req["currentUser"];
+        User.findOneAndRemove({ 'token.value': token }, function (err) {
             if (err) {
-                return res.status(500).json({ msg: "could not delete your account..." });
+                console.log(err);
+                return res.json({
+                    success: false,
+                    msg: "An error occured while deleting your account. Please try again."
+                });
             }
-            return res.status(200).json({ msg: "Your account has been deleted!" });
+            res.set('x-access-token', '');
+            res.set('user', '');
+            return res.json({
+                success: true,
+                msg: "You\'re account has been deleted. Sad to see you go :("
+            });
         });
     };
     return UserController;
