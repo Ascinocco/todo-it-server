@@ -5,17 +5,15 @@ import { ValidIntervals } from './Constants/ValidIntervals';
  * This is purely for modelling and have some sort of validation
  * This class will be used to ensure that the data stored to a users todoList is valid
  * 
- * NOTE!!!!!!!!!!!: not sure if month goes from 0 - 11 or 1 - 12 
- * 
  * @export
  * @class Todo
  */
 export class Todo
 {
-    private name:       string;
-    private desc:       string;
+    public name:       string;
+    public desc:       string;
 
-    private todoList:   string;
+    public projectName:   string;
     private labels:     Array<string>;
 
     private dueYear:    number;
@@ -33,6 +31,77 @@ export class Todo
     {
         this.alerts = [];
         this.labels = [];
+
+        if (todo["name"]) {
+            this.name = todo["name"];
+        } else {
+            this.name = 'My new todo'
+        }
+
+        if (todo["desc"]) {
+            this.desc = todo["desc"];
+        } else {
+            this.desc = "";
+        }
+
+        if (todo["projectName"]) {
+            this.projectName = todo["projectName"];
+        } else {
+            this.projectName = "Default"
+        }
+
+        if (todo["labels"]) {
+            var tempLabels: Array<string> = todo["labels"];
+            for (var x = 0; x < tempLabels.length; x++) {
+                this.addLabel(tempLabels[x]);
+            }
+        }
+
+        if (todo["dueYear"]) {
+            this.setDueYear(todo["dueYear"]);
+        } else {
+            this.setDueYear(moment.utc().year());
+        }
+        
+        if (todo["dueMonth"]) {
+            this.setDueMonth(todo["dueMonth"]);
+        } else {
+            this.setDueMonth(moment.utc().month());
+        }
+
+        if (todo["dueDay"]) {
+            this.setDueDay(todo["dueDay"]);
+        } else {
+            this.setDueDay(moment.utc().date());
+        }
+
+        if (todo["dueHour"]) {
+            this.setDueHour(todo["dueHour"]);
+        } else {
+            this.setDueHour(moment.utc().hour());
+        }
+
+        if (todo["dueMinute"]) {
+            this.setDueMinute(todo["dueMinute"]);
+        } else {
+            this.setDueMinute(moment.utc().minute());
+        }
+
+        this.createDueDate();
+
+        if (todo["alerts"]) {
+            let tempAlerts: Array<{ value: number, unit: string }> = todo["alerts"];
+            for (var i = 0; i < tempAlerts.length; i++) {
+                this.addAlert(tempAlerts[i]);
+            }
+        }
+
+        if (todo["interval"]) {
+            var tempInterval: { value: number, unit: string } = todo["interval"];
+            this.setInterval(tempInterval);
+        } else {
+            this.setInterval({ value: ValidIntervals.NONE.ZERO, unit: ValidIntervals.NONE.unit})
+        }
     }
 
 
@@ -168,7 +237,7 @@ export class Todo
     }
 
     // creates the actual date to store in the db
-    public setDueDate(): void
+    public createDueDate(): void
     {
         // all the validation is done in the setters of the date fields
         // year, month, day hours, minutes

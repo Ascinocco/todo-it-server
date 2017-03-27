@@ -7,6 +7,74 @@ var Todo = (function () {
     function Todo(todo) {
         this.alerts = [];
         this.labels = [];
+        if (todo["name"]) {
+            this.name = todo["name"];
+        }
+        else {
+            this.name = 'My new todo';
+        }
+        if (todo["desc"]) {
+            this.desc = todo["desc"];
+        }
+        else {
+            this.desc = "";
+        }
+        if (todo["projectName"]) {
+            this.projectName = todo["projectName"];
+        }
+        else {
+            this.projectName = "Default";
+        }
+        if (todo["labels"]) {
+            var tempLabels = todo["labels"];
+            for (var x = 0; x < tempLabels.length; x++) {
+                this.addLabel(tempLabels[x]);
+            }
+        }
+        if (todo["dueYear"]) {
+            this.setDueYear(todo["dueYear"]);
+        }
+        else {
+            this.setDueYear(moment.utc().year());
+        }
+        if (todo["dueMonth"]) {
+            this.setDueMonth(todo["dueMonth"]);
+        }
+        else {
+            this.setDueMonth(moment.utc().month());
+        }
+        if (todo["dueDay"]) {
+            this.setDueDay(todo["dueDay"]);
+        }
+        else {
+            this.setDueDay(moment.utc().date());
+        }
+        if (todo["dueHour"]) {
+            this.setDueHour(todo["dueHour"]);
+        }
+        else {
+            this.setDueHour(moment.utc().hour());
+        }
+        if (todo["dueMinute"]) {
+            this.setDueMinute(todo["dueMinute"]);
+        }
+        else {
+            this.setDueMinute(moment.utc().minute());
+        }
+        this.createDueDate();
+        if (todo["alerts"]) {
+            var tempAlerts = todo["alerts"];
+            for (var i = 0; i < tempAlerts.length; i++) {
+                this.addAlert(tempAlerts[i]);
+            }
+        }
+        if (todo["interval"]) {
+            var tempInterval = todo["interval"];
+            this.setInterval(tempInterval);
+        }
+        else {
+            this.setInterval({ value: ValidIntervals_1.ValidIntervals.NONE.ZERO, unit: ValidIntervals_1.ValidIntervals.NONE.unit });
+        }
     }
     Todo.prototype.setDueYear = function (year) {
         var currentYear = moment.utc().year();
@@ -123,7 +191,7 @@ var Todo = (function () {
     Todo.prototype.getDueMinute = function () {
         return this.dueMinute;
     };
-    Todo.prototype.setDueDate = function () {
+    Todo.prototype.createDueDate = function () {
         this.dueDate = moment.utc()
             .year(this.getDueYear())
             .month(this.getDueMonth())
