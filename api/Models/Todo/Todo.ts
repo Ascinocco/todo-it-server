@@ -26,11 +26,8 @@ export class Todo
 
     private dueDate:    any;
 
-    private alerts:     Array<string>;
-    private reminderInterval: string;
-
-    private createdAt:  string;
-    private updatedAt:  string;
+    private alerts:     Array<{value: number, measure: string}>;
+    private interval:   {value: number, measure: string};
 
     constructor(todo: Object)
     {
@@ -190,45 +187,26 @@ export class Todo
         return this.dueDate;
     }
 
-    public setReminderInterval(interval: string): void
+    public setReminderInterval(interval: {value: number, measure: string}): void
     {
+        if (measure in ValidIntervals.DAY)
+        this.interval = interval;
     }
 
-    public getReminderInterval(): string
+    public getReminderInterval(): {value: number, measure: string}
     {
-        return this.reminderInterval;
+        return this.interval;
     }
 
 
-    public setAlerts(): void
+    public addAlert(alert: { value: number, measure: string }): void
     {
-        
+        this.alerts.push(alert);
     }
 
-    public getAlerts(): Array<string>
+    public getAlerts(): Array<{ value: number, measure: string }>
     {
         return this.alerts;
     }
-
-    public setCreatedAt(): void
-    {
-
-    }
-
-    public getCreatedAt(): string
-    {
-        return this.createdAt;
-    }
-
-    public setUpdatedAt(): void
-    {
-
-    }
-
-    public getUpdatedAt(): string
-    {
-        return this.updatedAt;
-    }
-
     
 }

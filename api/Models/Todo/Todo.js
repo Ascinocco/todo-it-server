@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var moment = require("moment");
+var ValidIntervals_1 = require("./Constants/ValidIntervals");
 var Todo = (function () {
     function Todo(todo) {
     }
@@ -133,24 +134,17 @@ var Todo = (function () {
         return this.dueDate;
     };
     Todo.prototype.setReminderInterval = function (interval) {
+        if (measure in ValidIntervals_1.ValidIntervals.DAY)
+            this.interval = interval;
     };
     Todo.prototype.getReminderInterval = function () {
-        return this.reminderInterval;
+        return this.interval;
     };
-    Todo.prototype.setAlerts = function () {
+    Todo.prototype.addAlert = function (alert) {
+        this.alerts.push(alert);
     };
     Todo.prototype.getAlerts = function () {
         return this.alerts;
-    };
-    Todo.prototype.setCreatedAt = function () {
-    };
-    Todo.prototype.getCreatedAt = function () {
-        return this.createdAt;
-    };
-    Todo.prototype.setUpdatedAt = function () {
-    };
-    Todo.prototype.getUpdatedAt = function () {
-        return this.updatedAt;
     };
     return Todo;
 }());
