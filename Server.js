@@ -26,10 +26,10 @@ var Server = (function () {
         todo.addAlert({ value: 1, unit: 'day' });
         todo.addAlert({ value: 3, unit: 'hour' });
         todo.addAlert({ value: 1, unit: 'month' });
+        todo.addAlert({ value: 3, unit: 'hour' });
         console.log('adding alerts...');
         console.log(todo.getAlerts());
         console.log('removing some alerts...');
-        todo.removeAlert({ value: 3, unit: 'hour' });
         todo.removeAlert({ value: 1, unit: 'month' });
         console.log(todo.getAlerts());
     }

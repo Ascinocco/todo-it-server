@@ -165,11 +165,23 @@ var Todo = (function () {
             if (alert.unit === ValidAlerts_1.ValidAlerts[unitKey].unit) {
                 for (var alertValue in ValidAlerts_1.ValidAlerts[unitKey]) {
                     if (alert.value === ValidAlerts_1.ValidAlerts[unitKey][alertValue]) {
-                        this.alerts.push(alert);
+                        if (!this.isAlertDuplicate(alert)) {
+                            this.alerts.push(alert);
+                        }
                     }
                 }
             }
         }
+    };
+    Todo.prototype.isAlertDuplicate = function (alert) {
+        for (var i = 0; i < this.alerts.length; i++) {
+            if (alert.value === this.alerts[i].value && alert.unit === this.alerts[i].unit) {
+                console.log('Alert already exsists...');
+                console.log('Skipping...');
+                return true;
+            }
+        }
+        return false;
     };
     Todo.prototype.removeAlert = function (alert) {
         for (var i = 0; i < this.alerts.length; i++) {

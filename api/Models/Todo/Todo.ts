@@ -223,11 +223,25 @@ export class Todo
             if (alert.unit === ValidAlerts[unitKey].unit) {
                 for (var alertValue in ValidAlerts[unitKey]) {
                     if (alert.value === ValidAlerts[unitKey][alertValue]) {
-                        this.alerts.push(alert);
+                        if (!this.isAlertDuplicate(alert)) {
+                            this.alerts.push(alert);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private isAlertDuplicate(alert: { value: number, unit: string }): Boolean
+    {
+        for (var i = 0; i < this.alerts.length; i++) {
+            if (alert.value === this.alerts[i].value && alert.unit === this.alerts[i].unit){
+                console.log('Alert already exsists...');
+                console.log('Skipping...');
+                return true;
+            }
+        }
+        return false;
     }
 
     public removeAlert(alert: { value: number, unit: string }): Boolean
@@ -245,6 +259,5 @@ export class Todo
     public getAlerts(): Array<{ value: number, unit: string }>
     {
         return this.alerts;
-    }
-    
+    }    
 }
