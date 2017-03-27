@@ -23,15 +23,13 @@ var Server = (function () {
         this.registerJobs();
         this.bootstrapComplete();
         var todo = new Todo_1.Todo({});
-        todo.addAlert({ value: 1, unit: 'day' });
-        todo.addAlert({ value: 3, unit: 'hour' });
-        todo.addAlert({ value: 1, unit: 'month' });
-        todo.addAlert({ value: 3, unit: 'hour' });
-        console.log('adding alerts...');
-        console.log(todo.getAlerts());
-        console.log('removing some alerts...');
-        todo.removeAlert({ value: 1, unit: 'month' });
-        console.log(todo.getAlerts());
+        todo.addLabel('School');
+        todo.addLabel('Homework');
+        todo.addLabel('homework');
+        todo.addLabel('car');
+        console.log(todo.getLabels());
+        todo.removeLabel('car');
+        console.log(todo.getLabels());
     }
     Server.boostrap = function (db, env) {
         return new Server(db, env);

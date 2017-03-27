@@ -195,6 +195,32 @@ var Todo = (function () {
     Todo.prototype.getAlerts = function () {
         return this.alerts;
     };
+    Todo.prototype.addLabel = function (label) {
+        if (!this.isLabelDuplicate(label)) {
+            this.labels.push(label);
+        }
+    };
+    Todo.prototype.isLabelDuplicate = function (label) {
+        console.log(label);
+        for (var i = 0; i < this.labels.length; i++) {
+            if (label.toUpperCase() === this.labels[i].toUpperCase()) {
+                console.log('Label' + label + ' already exists...');
+                console.log('Skipping...');
+                return true;
+            }
+        }
+        return false;
+    };
+    Todo.prototype.removeLabel = function (label) {
+        for (var i = 0; i < this.labels.length; i++) {
+            if (label.toUpperCase() === this.labels[i].toUpperCase()) {
+                this.labels.splice(i, 1);
+            }
+        }
+    };
+    Todo.prototype.getLabels = function () {
+        return this.labels;
+    };
     return Todo;
 }());
 exports.Todo = Todo;

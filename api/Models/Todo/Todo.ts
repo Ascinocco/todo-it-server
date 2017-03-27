@@ -259,5 +259,39 @@ export class Todo
     public getAlerts(): Array<{ value: number, unit: string }>
     {
         return this.alerts;
-    }    
+    }
+
+    public addLabel(label: string): void
+    {
+        if (!this.isLabelDuplicate(label)) {
+            this.labels.push(label);
+        }
+    }
+
+    private isLabelDuplicate(label: string): Boolean
+    {
+        console.log(label);
+        for (var i = 0; i < this.labels.length; i++) {
+            if (label.toUpperCase() === this.labels[i].toUpperCase()) {
+                console.log('Label' + label + ' already exists...');
+                console.log('Skipping...');
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public removeLabel(label: string): void 
+    {
+        for (var i = 0; i < this.labels.length; i++) {
+            if (label.toUpperCase() === this.labels[i].toUpperCase()) {
+                this.labels.splice(i, 1);
+            }
+        }
+    }
+
+    public getLabels(): Array<string>
+    {
+        return this.labels;
+    }
 }
