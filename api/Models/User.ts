@@ -21,6 +21,11 @@ let userSchema = new Schema({
         notifications: {
             email: { type: Boolean, required: true, default: false },
             native: { type: Boolean, required: true, default: false }
+        },
+
+        time: {
+            twelveHour: { type: Boolean, required: true, default: false },
+            twentyFourHour: { type: Boolean, required: true, default: true }
         }
     },
 
