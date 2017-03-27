@@ -10,117 +10,98 @@ export class UserController
 
     public getUser(req: Request, res: Response, next: NextFunction): any
     {
-        let userId = req.params._id;
-
-        User.findById({ _id: userId}, function(err, user) {
+        let token = req["currentToken"];
+        User.findByToken(token, function (err, user) {
             if (err) {
-                return res.status(500).json({msg: "Could not find you."});
+                console.log(err);
+                return res.json({
+                    success: false,
+                    msg: "We could not get your user data"
+                })
             }
 
-            user = user.toJSON();
-            return res.status(200).json({msg: "here you are!", user: user});
-        });
+            res.set('user', user.toJSON());
+
+            return res.json({
+                success: true,
+                msg: "User data found",
+                user: user.toJSON()
+            })
+        })
     }
 
     public updateAccount(req: Request, res: Response, next: NextFunction): any
     {
-        let tempUser = req.body.user;
-        let confirmPassword = req.body.confirmPassword;
-        let newPassword = req.body.newPassword;
+        let token = req["currentToken"];
+        let user = req["currentUser"];
+        let shouldUpdatePassword: boolean = false;
+        let updateForm = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email
+        }
+        
+        if (user.firstName !== updateForm.firstName && user.firstName && updateForm.firstName) {
+            user.firstName = updateForm.firstName;
+        }
+        if (user.lastName !== updateForm.lastName && user.lastName && updateForm.lastName) {
+            user.lastName = updateForm.lastName;
+        }
+        if (user.email !== updateForm.email && user.email && updateForm.email) {
+            user.email = updateForm.email;
+        }
 
-        if (tempUser.password) {
-           if (newPassword === confirmPassword) {
-                async.waterfall([
-                    function (done) {
-                        User.findOne({ email: tempUser.email }, function (err, user) {
-                            if (err) {
-                                return res.status(200)
-                                    .json({
-                                        success: false,
-                                        msg: "I couldn't find you... Are you real?"
-                                    });
-                            }
-
-                            user.firstName = tempUser.firstName;
-                            user.lastName = tempUser.lastName;
-                            user.email = tempUser.email;
-                            user.password = newPassword;
-
-                            user.save(function(err) {
-                                if (err) {
-                                    return res.status(200)
-                                        .json({
-                                            success: false,
-                                            msg: "I couldn't save your updates... Sorry about that."
-                                        });
-                                }
-
-                                done (err, user);
-                            });
-                        });
-                    }, function (user, done) {
-                        done(user)
-                    }
-                ], function(user) {
-                    try {
-                        let updatedUser = {};
-                        updatedUser["firstName"] = user["firstName"];
-                        updatedUser["lastName"] = user["lastName"];
-                        updatedUser["email"] = user["email"];
-
-                        return res.status(200)
-                        .json({
-                            success: true,
-                            msg: "Your account has been updated!",
-                            user: updatedUser
-                        });
-                    } catch (err) {
-                        console.log('Error returning updates');
-                        return res.status(200)
-                            .json({
-                                success: false,
-                                msg: "Error loading your updates. Please refresh the page to see your changes"
-                            })
-                    }
-                });
-           } else {
-               return res.status(200)
-                    .json({
-                        success: false,
-                        msg: "You new password does not match the confirmation"
-                    });
+        if (req.body.newPassword && req.body.confirmPassword && req.body.currentPassword) {
+            let passwords = {
+                new: req.body.newPassword,
+                confirm: req.body.confirmPassword,
+                current: req.body.currentPassword
            }
-        } else {
-            console.log('first else -----')
-            User.findOneAndUpdate({ email: tempUser.email }, 
-            { $set: 
-                { 
-                    email: tempUser.email,
-                    firstName: tempUser.firstName,
-                    lastName: tempUser.lastName,
-                    updated_at: Date.now()
-                }
-            },
-            {
-                new: true
-            },
-             function(err, user) {
+
+           if (passwords.new !== passwords.confirm){
+                return res.json({
+                    success: false,
+                    msg: "Passwords do not match"
+                })
+            } else {
+                user.comparePassword(passwords.current, function(err, isMatch) {
+                    if (err) {
+                        console.log(err);
+                        return res.json({
+                            success: false,
+                            msg: "An error occured while comparing your passwords"
+                        })
+                    }
+
+                    if (isMatch) {
+                        user.password = passwords.new;
+                        shouldUpdatePassword = true;
+                    } else {
+                        return res.json({
+                            success: false,
+                            msg: "The password you entered as your current password does not match the password we have on file for your account"
+                        });
+                    }
+                })
+            }
+        }
+
+        if (user.firstName || user.lastName || user.email || shouldUpdatePassword) {
+            user.save(function(err) {
                 if (err) {
                     console.log(err);
-                    return res.status(200)
-                    .json({
+                    return res.json({
                         success: false,
-                        msg: "Error update user"
-                    });
+                        msg: "An error occured while updating your account. Please try again."
+                    })
                 }
 
-                return res.status(200)
-                    .json({
-                        success: true,
-                        msg: "Your account has been updated!",
-                        user: user.toJSON()
-                    });
-             });
+                return res.json({
+                    success: true,
+                    msg: "Your account has been updated!",
+                    user: user.toJSON()
+                })
+            });
         }
     }
 

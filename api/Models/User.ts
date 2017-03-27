@@ -115,10 +115,6 @@ userSchema.methods.isTokenValid = function(token) {
     return false;
 }
 
-userSchema.statics.findByTokenAndUserId = function(token, userId, callback) {
-    return this.findOne({ _id: userId, 'token.value': token }, callback);
-}
-
 userSchema.statics.findByToken = function(token, callback) {
     return this.findOne({ 'token.value': token }, callback);
 }

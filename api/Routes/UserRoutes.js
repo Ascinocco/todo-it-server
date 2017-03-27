@@ -6,9 +6,9 @@ var userController = new UserController_1.UserController();
 var express = require('express');
 var router = express.Router();
 router.use(AuthMiddleware_1.AuthMiddleware.checkToken);
+router.get('/', userController.getUser);
 router.post('/update/account', userController.updateAccount);
 router.post('/update/settings', userController.updateSettings);
-router.get('/:_id', userController.getUser);
-router.delete('/delete/:_id', userController.deleteAccount);
+router.delete('/delete/', userController.deleteAccount);
 module.exports = router;
 //# sourceMappingURL=UserRoutes.js.map
